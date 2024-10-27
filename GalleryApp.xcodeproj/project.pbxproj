@@ -12,6 +12,7 @@
 		02B6249B2CCD3A0D00704E80 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B6249A2CCD3A0D00704E80 /* ViewController.swift */; };
 		02B624A02CCD3A0F00704E80 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02B6249F2CCD3A0F00704E80 /* Assets.xcassets */; };
 		02B624A32CCD3A0F00704E80 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 02B624A12CCD3A0F00704E80 /* LaunchScreen.storyboard */; };
+		02B624AC2CCE859000704E80 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B624AB2CCE859000704E80 /* NetworkManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		02B6249F2CCD3A0F00704E80 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		02B624A22CCD3A0F00704E80 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		02B624A42CCD3A0F00704E80 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		02B624AB2CCE859000704E80 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +58,7 @@
 			children = (
 				02B624962CCD3A0D00704E80 /* AppDelegate.swift */,
 				02B624982CCD3A0D00704E80 /* SceneDelegate.swift */,
+				02B624AB2CCE859000704E80 /* NetworkManager.swift */,
 				02B6249A2CCD3A0D00704E80 /* ViewController.swift */,
 				02B6249F2CCD3A0F00704E80 /* Assets.xcassets */,
 				02B624A12CCD3A0F00704E80 /* LaunchScreen.storyboard */,
@@ -72,6 +75,7 @@
 			buildConfigurationList = 02B624A72CCD3A0F00704E80 /* Build configuration list for PBXNativeTarget "GalleryApp" */;
 			buildPhases = (
 				02B6248F2CCD3A0D00704E80 /* Sources */,
+				02B624AA2CCD4A5700704E80 /* ShellScript */,
 				02B624902CCD3A0D00704E80 /* Frameworks */,
 				02B624912CCD3A0D00704E80 /* Resources */,
 			);
@@ -129,11 +133,34 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		02B624AA2CCD4A5700704E80 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/.swiftlint.yml",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nexport PATH=\"$PATH:/opt/homebrew/bin\"\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		02B6248F2CCD3A0D00704E80 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02B624AC2CCE859000704E80 /* NetworkManager.swift in Sources */,
 				02B6249B2CCD3A0D00704E80 /* ViewController.swift in Sources */,
 				02B624972CCD3A0D00704E80 /* AppDelegate.swift in Sources */,
 				02B624992CCD3A0D00704E80 /* SceneDelegate.swift in Sources */,
@@ -191,7 +218,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -254,7 +281,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
