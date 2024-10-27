@@ -10,9 +10,10 @@ import Foundation
 // List of errors that may occur when working with the network
 enum NetworkError: Error {
     case invalidURL
-    case requestFailed
+    case urlRequestFailed
     case noData
     case decodingError
+    case invalidResponse
 }
 
 class NetworkManager {
@@ -45,7 +46,7 @@ class NetworkManager {
             return }
         
         guard let urlRequest = createRequest(url: url) else {
-            completion(.failure(NetworkError.requestFailed))
+            completion(.failure(NetworkError.urlRequestFailed))
             return }
         
         let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
@@ -61,9 +62,9 @@ class NetworkManager {
                 completion(.failure(NetworkError.decodingError))
             }
             
-            if let response = response {
-
-            }
+            guard let response = response as? HTTPURLResponse else { 
+                completion(.failure(NetworkError.invalidResponse))
+                return }
             
             if let error = error {
                 completion(.failure(error))
