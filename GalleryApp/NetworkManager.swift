@@ -7,10 +7,6 @@
 
 import Foundation
 
-struct Photo: Codable {
-    let id: String
-}
-
 // List of errors that may occur when working with the network
 enum NetworkError: Error {
     case invalidURL
@@ -66,7 +62,7 @@ class NetworkManager {
             }
             
             if let response = response {
-                
+
             }
             
             if let error = error {
