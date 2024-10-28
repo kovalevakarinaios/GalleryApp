@@ -9,6 +9,9 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    // Think about refactoring (D)
+    private let viewModel = ViewModel()
+    
     private lazy var collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         flowLayout.itemSize = CGSize(width: 100, height: 100)
@@ -25,6 +28,8 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = .systemBackground
         self.setupCollectionView()
+        self.viewModel.delegate = self
+        self.viewModel.loadData()
     }
     
     private func setupCollectionView() {
@@ -39,9 +44,10 @@ class ViewController: UIViewController {
     }
 }
 
+// MARK: UICollectionViewDelegate & UICollectionViewDataSource
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 30
+        self.viewModel.numberOfItems
     }
     
     func collectionView(_ collectionView: UICollectionView, 
@@ -51,5 +57,26 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         return cell
+    }
+}
+
+// MARK: RequestDelegate - ViewModel
+extension ViewController: RequestDelegate {
+    func didUpdate(with state: ViewState) {
+        DispatchQueue.main.async {
+            switch state {
+            case .isLoading:
+                // showLoadingIndicator
+                print("showLoadingIndicator")
+            case .success:
+                self.collectionView.reloadData()
+                print("success")
+            case .error:
+                // showAlertController
+                print("showAlertController")
+            case .idle:
+                break
+            }
+        }
     }
 }
