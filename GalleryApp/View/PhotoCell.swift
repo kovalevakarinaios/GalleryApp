@@ -37,4 +37,8 @@ class PhotoCell: UICollectionViewCell {
             self.imageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -5)
         ])
     }
+    
+    func configureCell(image: UIImage) {
+        self.imageView.image = image
+    }
 }

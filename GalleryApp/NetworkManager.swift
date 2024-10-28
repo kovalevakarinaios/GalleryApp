@@ -41,9 +41,11 @@ class NetworkManager {
     }
     
     func getPhotos(completion: @escaping (Result<[Photo], Error>) -> Void) {
+        
         guard let url = createURL() else {
             completion(.failure(NetworkError.invalidURL))
-            return }
+            return
+        }
         
         guard let urlRequest = createRequest(url: url) else {
             completion(.failure(NetworkError.urlRequestFailed))
@@ -62,7 +64,37 @@ class NetworkManager {
                 completion(.failure(NetworkError.decodingError))
             }
             
-            guard let response = response as? HTTPURLResponse else { 
+            guard let response = response as? HTTPURLResponse else {
+                completion(.failure(NetworkError.invalidResponse))
+                return }
+            
+            if let error = error {
+                completion(.failure(error))
+            }
+        }
+        task.resume()
+    }
+    
+    func downloadImage(url: URL, completion: @escaping (Result<Data, Error>) -> Void) {
+       
+        guard let urlRequest = createRequest(url: url) else {
+            completion(.failure(NetworkError.urlRequestFailed))
+            return }
+        
+        let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+            guard let data = data else {
+                completion(.failure(NetworkError.noData))
+                return
+            }
+            
+            do {
+                let data = try Data(contentsOf: url)
+                completion(.success(data))
+            } catch {
+                completion(.failure(NetworkError.decodingError))
+            }
+            
+            guard let response = response as? HTTPURLResponse else {
                 completion(.failure(NetworkError.invalidResponse))
                 return }
             

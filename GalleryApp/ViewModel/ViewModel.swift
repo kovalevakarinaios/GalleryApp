@@ -6,8 +6,8 @@
 //
 
 import Foundation
+import UIKit
 
-// Нельзя сделать weak, если нет AnyObject
 protocol RequestDelegate: AnyObject {
     func didUpdate(with state: ViewState)
 }
@@ -41,11 +41,18 @@ extension ViewModel {
     var numberOfItems: Int {
         self.photos.count
     }
+    
+    func getThumbUrl(for indexPath: IndexPath) -> URL? {
+        guard let url = URL(string: self.photos[indexPath.row].urls.thumb) else {
+            return nil
+        }
+        return url
+    }
 }
 
 // MARK: Setup Data Loading
 extension ViewModel {
-    func loadData() {
+    func loadPhotos() {
         self.viewState = .isLoading
         NetworkManager.shared.getPhotos { result in
             switch result {
@@ -54,6 +61,19 @@ extension ViewModel {
                 self.viewState = .success
             case .failure(let failure):
                 self.viewState = .error
+            }
+        }
+    }
+    
+    func loadImage(url: URL, completion: @escaping (UIImage?) -> Void) {
+        NetworkManager.shared.downloadImage(url: url) { result in
+            switch result {
+            case .success(let data):
+                let image = UIImage(data: data)
+                completion(image)
+                print("Cell success")
+            case .failure(let failure):
+                print("Cell failure - \(failure)")
             }
         }
     }

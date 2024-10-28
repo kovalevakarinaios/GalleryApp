@@ -14,7 +14,7 @@ class ViewController: UIViewController {
     
     private lazy var collectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.itemSize = CGSize(width: 100, height: 100)
+        flowLayout.itemSize = CGSize(width: 200, height: 200)
         
         let collectionView = UICollectionView(frame: .infinite, collectionViewLayout: flowLayout)
         collectionView.register(PhotoCell.self, forCellWithReuseIdentifier: PhotoCell.identifier)
@@ -29,7 +29,7 @@ class ViewController: UIViewController {
         self.view.backgroundColor = .systemBackground
         self.setupCollectionView()
         self.viewModel.delegate = self
-        self.viewModel.loadData()
+        self.viewModel.loadPhotos()
     }
     
     private func setupCollectionView() {
@@ -56,6 +56,18 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
                                                             for: indexPath) as? PhotoCell else {
             return UICollectionViewCell()
         }
+        
+        if let url = self.viewModel.getThumbUrl(for: indexPath) {
+            self.viewModel.loadImage(url: url) { image in
+                if let image = image {
+                    DispatchQueue.main.async {
+                        cell.configureCell(image: image)
+                    }
+                }
+               
+            }
+        }
+      
         return cell
     }
 }
