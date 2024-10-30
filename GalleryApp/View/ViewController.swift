@@ -13,10 +13,10 @@ class ViewController: UIViewController {
     private let viewModel = ViewModel()
     
     private lazy var collectionView: UICollectionView = {
-        let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.itemSize = CGSize(width: 200, height: 200)
+        let layout = GalleryLayout()
+        layout.delegate = self
         
-        let collectionView = UICollectionView(frame: .infinite, collectionViewLayout: flowLayout)
+        let collectionView = UICollectionView(frame: .infinite, collectionViewLayout: layout)
         collectionView.register(PhotoCell.self, forCellWithReuseIdentifier: PhotoCell.identifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.dataSource = self
@@ -44,13 +44,19 @@ class ViewController: UIViewController {
     }
 }
 
+extension ViewController: GalleryLayoutDelegate {
+    func collectionView(_ collectionView: UICollectionView, ratioForPhotoAtIndexPath indexPath: IndexPath) -> CGFloat {
+        self.viewModel.getRatio(for: indexPath)
+    }
+}
+
 // MARK: UICollectionViewDelegate & UICollectionViewDataSource
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         self.viewModel.numberOfItems
     }
     
-    func collectionView(_ collectionView: UICollectionView, 
+    func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCell.identifier,
                                                             for: indexPath) as? PhotoCell else {
@@ -64,10 +70,10 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
                         cell.configureCell(image: image)
                     }
                 }
-               
+                
             }
         }
-      
+        
         return cell
     }
 }

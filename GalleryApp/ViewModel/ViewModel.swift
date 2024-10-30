@@ -48,6 +48,10 @@ extension ViewModel {
         }
         return url
     }
+    
+    func getRatio(for indexPath: IndexPath) -> CGFloat {
+        CGFloat(self.photos[indexPath.row].height) / CGFloat(self.photos[indexPath.row].width)
+    }
 }
 
 // MARK: Setup Data Loading

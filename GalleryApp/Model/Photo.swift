@@ -7,23 +7,25 @@
 
 import Foundation
 
-struct Photo: Codable {
+struct Photo: Codable, Hashable {
     let id: String
     let likes: Int
+    let width: Int
+    let height: Int
     let createdAt: String
     let userDescription: String?
     let generalDescription: String
     let urls: PhotoURLs
     
     enum CodingKeys: String, CodingKey {
-        case id, likes, urls
+        case id, likes, urls, height, width
         case createdAt = "created_at"
         case userDescription = "description"
         case generalDescription = "alt_description"
     }
 }
 
-struct PhotoURLs: Codable {
+struct PhotoURLs: Codable, Hashable {
     let regular: String
     let thumb: String
 }
