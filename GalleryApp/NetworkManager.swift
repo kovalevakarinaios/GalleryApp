@@ -20,11 +20,16 @@ class NetworkManager {
     
     static let shared = NetworkManager()
     
-    private func createURL() -> URL? {
+    private func createURL(currentPage: Int) -> URL? {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.unsplash.com"
         components.path = "/photos"
+        components.queryItems = [
+            URLQueryItem(name: "page", value: "\(currentPage)"),
+            URLQueryItem(name: "per_page", value: "30"),
+            
+        ]
         return components.url
     }
     
@@ -40,9 +45,9 @@ class NetworkManager {
         return urlRequest
     }
     
-    func getPhotos(completion: @escaping (Result<[Photo], Error>) -> Void) {
+    func getPhotos(currentPage: Int, completion: @escaping (Result<[Photo], Error>) -> Void) {
         
-        guard let url = createURL() else {
+        guard let url = createURL(currentPage: currentPage) else {
             completion(.failure(NetworkError.invalidURL))
             return
         }

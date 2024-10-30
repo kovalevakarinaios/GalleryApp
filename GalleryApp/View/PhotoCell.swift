@@ -14,7 +14,6 @@ class PhotoCell: UICollectionViewCell {
     private lazy var imageView: UIImageView = {
         var imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.backgroundColor = .cyan
         return imageView
     }()
 
@@ -25,6 +24,11 @@ class PhotoCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        self.imageView.image = nil
     }
     
     private func setupImageView() {

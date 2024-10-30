@@ -21,6 +21,7 @@ enum ViewState {
 
 class ViewModel {
     
+    private var currentPage = 1
     weak var delegate: RequestDelegate?
     
     private var viewState: ViewState {
@@ -57,11 +58,14 @@ extension ViewModel {
 // MARK: Setup Data Loading
 extension ViewModel {
     func loadPhotos() {
+        guard viewState != .isLoading else { return }
+        
         self.viewState = .isLoading
-        NetworkManager.shared.getPhotos { result in
+        NetworkManager.shared.getPhotos(currentPage: self.currentPage) { result in
             switch result {
             case .success(let success):
-                self.photos = success
+                self.currentPage += 1
+                self.photos.append(contentsOf: success)
                 self.viewState = .success
             case .failure(let failure):
                 self.viewState = .error
@@ -75,7 +79,6 @@ extension ViewModel {
             case .success(let data):
                 let image = UIImage(data: data)
                 completion(image)
-                print("Cell success")
             case .failure(let failure):
                 print("Cell failure - \(failure)")
             }

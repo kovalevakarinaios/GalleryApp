@@ -50,6 +50,14 @@ extension ViewController: GalleryLayoutDelegate {
     }
 }
 
+extension ViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y > (scrollView.contentSize.height - scrollView.bounds.height * 1.2) {
+            self.viewModel.loadPhotos()
+        }
+    }
+}
+
 // MARK: UICollectionViewDelegate & UICollectionViewDataSource
 extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
