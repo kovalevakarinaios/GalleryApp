@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		02B624972CCD3A0D00704E80 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B624962CCD3A0D00704E80 /* AppDelegate.swift */; };
 		02B624992CCD3A0D00704E80 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B624982CCD3A0D00704E80 /* SceneDelegate.swift */; };
-		02B6249B2CCD3A0D00704E80 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B6249A2CCD3A0D00704E80 /* ViewController.swift */; };
+		02B6249B2CCD3A0D00704E80 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B6249A2CCD3A0D00704E80 /* MainViewController.swift */; };
 		02B624A02CCD3A0F00704E80 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02B6249F2CCD3A0F00704E80 /* Assets.xcassets */; };
 		02B624A32CCD3A0F00704E80 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 02B624A12CCD3A0F00704E80 /* LaunchScreen.storyboard */; };
 		02B624AC2CCE859000704E80 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B624AB2CCE859000704E80 /* NetworkManager.swift */; };
@@ -17,13 +17,16 @@
 		02B624B02CCEAC1A00704E80 /* PhotoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B624AF2CCEAC1A00704E80 /* PhotoCell.swift */; };
 		02B624B22CD009C000704E80 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B624B12CD009C000704E80 /* ViewModel.swift */; };
 		02B624B92CD147A000704E80 /* GalleryLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B624B82CD147A000704E80 /* GalleryLayout.swift */; };
+		02B624BB2CD4D83000704E80 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B624BA2CD4D83000704E80 /* DetailViewController.swift */; };
+		02B624BD2CD4DB2100704E80 /* CustomTransitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B624BC2CD4DB2100704E80 /* CustomTransitionAnimator.swift */; };
+		02B624BF2CD4DD8B00704E80 /* CustomNavigationControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02B624BE2CD4DD8B00704E80 /* CustomNavigationControllerDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		02B624932CCD3A0D00704E80 /* GalleryApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GalleryApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		02B624962CCD3A0D00704E80 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		02B624982CCD3A0D00704E80 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		02B6249A2CCD3A0D00704E80 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		02B6249A2CCD3A0D00704E80 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		02B6249F2CCD3A0F00704E80 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		02B624A22CCD3A0F00704E80 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		02B624A42CCD3A0F00704E80 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -32,6 +35,9 @@
 		02B624AF2CCEAC1A00704E80 /* PhotoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCell.swift; sourceTree = "<group>"; };
 		02B624B12CD009C000704E80 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		02B624B82CD147A000704E80 /* GalleryLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryLayout.swift; sourceTree = "<group>"; };
+		02B624BA2CD4D83000704E80 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		02B624BC2CD4DB2100704E80 /* CustomTransitionAnimator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTransitionAnimator.swift; sourceTree = "<group>"; };
+		02B624BE2CD4DD8B00704E80 /* CustomNavigationControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationControllerDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,9 +70,11 @@
 		02B624952CCD3A0D00704E80 /* GalleryApp */ = {
 			isa = PBXGroup;
 			children = (
-				02B624962CCD3A0D00704E80 /* AppDelegate.swift */,
 				02B624982CCD3A0D00704E80 /* SceneDelegate.swift */,
+				02B624962CCD3A0D00704E80 /* AppDelegate.swift */,
 				02B624AB2CCE859000704E80 /* NetworkManager.swift */,
+				02B624BC2CD4DB2100704E80 /* CustomTransitionAnimator.swift */,
+				02B624BE2CD4DD8B00704E80 /* CustomNavigationControllerDelegate.swift */,
 				02B624B32CD00DDB00704E80 /* Model */,
 				02B624B52CD00DF700704E80 /* View */,
 				02B624B42CD00DE600704E80 /* ViewModel */,
@@ -97,7 +105,8 @@
 			isa = PBXGroup;
 			children = (
 				02B624AF2CCEAC1A00704E80 /* PhotoCell.swift */,
-				02B6249A2CCD3A0D00704E80 /* ViewController.swift */,
+				02B6249A2CCD3A0D00704E80 /* MainViewController.swift */,
+				02B624BA2CD4D83000704E80 /* DetailViewController.swift */,
 				02B624B82CD147A000704E80 /* GalleryLayout.swift */,
 			);
 			path = View;
@@ -196,10 +205,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02B624BB2CD4D83000704E80 /* DetailViewController.swift in Sources */,
 				02B624AC2CCE859000704E80 /* NetworkManager.swift in Sources */,
-				02B6249B2CCD3A0D00704E80 /* ViewController.swift in Sources */,
+				02B624BD2CD4DB2100704E80 /* CustomTransitionAnimator.swift in Sources */,
+				02B6249B2CCD3A0D00704E80 /* MainViewController.swift in Sources */,
 				02B624972CCD3A0D00704E80 /* AppDelegate.swift in Sources */,
 				02B624992CCD3A0D00704E80 /* SceneDelegate.swift in Sources */,
+				02B624BF2CD4DD8B00704E80 /* CustomNavigationControllerDelegate.swift in Sources */,
 				02B624B92CD147A000704E80 /* GalleryLayout.swift in Sources */,
 				02B624B02CCEAC1A00704E80 /* PhotoCell.swift in Sources */,
 				02B624AE2CCE9BDD00704E80 /* Photo.swift in Sources */,

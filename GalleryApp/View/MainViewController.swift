@@ -7,8 +7,9 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class MainViewController: UIViewController {
     
+    private let customNavigationDelegate = CustomNavigationControllerDelegate()
     // Think about refactoring (D)
     private let viewModel = ViewModel()
     
@@ -27,9 +28,15 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .systemBackground
+        self.navigationController?.delegate = self.customNavigationDelegate
         self.setupCollectionView()
         self.viewModel.delegate = self
         self.viewModel.loadPhotos()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.isHidden = true
     }
     
     private func setupCollectionView() {
@@ -44,13 +51,13 @@ class ViewController: UIViewController {
     }
 }
 
-extension ViewController: GalleryLayoutDelegate {
+extension MainViewController: GalleryLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, ratioForPhotoAtIndexPath indexPath: IndexPath) -> CGFloat {
         self.viewModel.getRatio(for: indexPath)
     }
 }
 
-extension ViewController: UIScrollViewDelegate {
+extension MainViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView.contentOffset.y > (scrollView.contentSize.height - scrollView.bounds.height * 1.2) {
             self.viewModel.loadPhotos()
@@ -59,7 +66,7 @@ extension ViewController: UIScrollViewDelegate {
 }
 
 // MARK: UICollectionViewDelegate & UICollectionViewDataSource
-extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         self.viewModel.numberOfItems
     }
@@ -81,13 +88,22 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
                 
             }
         }
-        
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let cell = collectionView.cellForItem(at: indexPath) {
+            // Convert сell frame to frame relative to superview
+            let originFrame = cell.superview?.convert(cell.frame, to: nil) ?? .zero
+            customNavigationDelegate.setOriginFrame(originFrame: originFrame)
+        }
+        let detailViewController = DetailViewController()
+        self.navigationController?.pushViewController(detailViewController, animated: true)
     }
 }
 
 // MARK: RequestDelegate - ViewModel
-extension ViewController: RequestDelegate {
+extension MainViewController: RequestDelegate {
     func didUpdate(with state: ViewState) {
         DispatchQueue.main.async {
             switch state {

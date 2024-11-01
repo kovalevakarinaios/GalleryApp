@@ -21,10 +21,12 @@ enum ViewState {
 
 class ViewModel {
     
+    // Request data page-by-page (30 photos on each page)
     private var currentPage = 1
     weak var delegate: RequestDelegate?
     
     private var viewState: ViewState {
+        // When viewState is changed, notify about it MainViewController
         didSet {
             self.delegate?.didUpdate(with: viewState)
         }
