@@ -37,8 +37,8 @@ class PhotoCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             self.imageView.topAnchor.constraint(equalTo: self.contentView.topAnchor),
             self.imageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
-            self.imageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 5),
-            self.imageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -5)
+            self.imageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
+            self.imageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor)
         ])
     }
     

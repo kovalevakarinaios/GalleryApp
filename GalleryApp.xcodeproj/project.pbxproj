@@ -70,8 +70,8 @@
 		02B624952CCD3A0D00704E80 /* GalleryApp */ = {
 			isa = PBXGroup;
 			children = (
-				02B624982CCD3A0D00704E80 /* SceneDelegate.swift */,
 				02B624962CCD3A0D00704E80 /* AppDelegate.swift */,
+				02B624982CCD3A0D00704E80 /* SceneDelegate.swift */,
 				02B624AB2CCE859000704E80 /* NetworkManager.swift */,
 				02B624BC2CD4DB2100704E80 /* CustomTransitionAnimator.swift */,
 				02B624BE2CD4DD8B00704E80 /* CustomNavigationControllerDelegate.swift */,

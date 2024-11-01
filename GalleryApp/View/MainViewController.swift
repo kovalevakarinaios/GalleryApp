@@ -17,7 +17,7 @@ class MainViewController: UIViewController {
         let layout = GalleryLayout()
         layout.delegate = self
         
-        let collectionView = UICollectionView(frame: .infinite, collectionViewLayout: layout)
+        let collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
         collectionView.register(PhotoCell.self, forCellWithReuseIdentifier: PhotoCell.identifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.dataSource = self
@@ -28,15 +28,23 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .systemBackground
-        self.navigationController?.delegate = self.customNavigationDelegate
+        self.setupViewModel()
         self.setupCollectionView()
-        self.viewModel.delegate = self
-        self.viewModel.loadPhotos()
+        self.setupNavigationController()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isHidden = true
+    }
+    
+    private func setupViewModel() {
+        self.viewModel.delegate = self
+        self.viewModel.loadPhotos()
+    }
+    
+    private func setupNavigationController() {
+        self.navigationController?.delegate = self.customNavigationDelegate
     }
     
     private func setupCollectionView() {
@@ -111,8 +119,8 @@ extension MainViewController: RequestDelegate {
                 // showLoadingIndicator
                 print("showLoadingIndicator")
             case .success:
+                print("Success")
                 self.collectionView.reloadData()
-                print("success")
             case .error:
                 // showAlertController
                 print("showAlertController")
