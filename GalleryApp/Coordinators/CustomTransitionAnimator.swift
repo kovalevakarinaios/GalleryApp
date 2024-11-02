@@ -11,17 +11,24 @@ import UIKit
 // MARK: Custom TransitionAnimator
 class CustomTransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     
-    private var isPush: Bool
-    private var originFrame: CGRect
+    private let isPush: Bool
+    private let cellOriginFrame: CGRect
+    private let selectedCellImageViewSnapshot: UIView
+    private let detailImageViewFrame: CGRect
     
-    init(isPush: Bool, originFrame: CGRect) {
+    init(isPush: Bool, 
+         cellOriginFrame: CGRect,
+         selectedCellImageViewSnapshot: UIView,
+         detailImageViewFrame: CGRect) {
         self.isPush = isPush
-        self.originFrame = originFrame
+        self.cellOriginFrame = cellOriginFrame
+        self.selectedCellImageViewSnapshot = selectedCellImageViewSnapshot
+        self.detailImageViewFrame = detailImageViewFrame
     }
     
     // Transition animation duration
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        0.4
+        0.5
     }
     
     // Setup custom transition animation
@@ -33,34 +40,52 @@ class CustomTransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning 
               let toView = transitionContext.view(forKey: .to) else {
             return
         }
-        
-        let animatingView = self.isPush ? toView : fromView
-        
+
         // Get containerview that manages hierarchy of views for animation
         let containerView = transitionContext.containerView
+        
+        // Add fadeview for blur effect during transitioning
+        let fadeView = UIView(frame: containerView.bounds)
+        fadeView.backgroundColor = .systemBackground
+        
+        // Building view hierarchies in container view
+        containerView.addSubview(toView)
+        containerView.insertSubview(fadeView, aboveSubview: toView)
+        containerView.insertSubview(self.selectedCellImageViewSnapshot, aboveSubview: fadeView)
 
-        // AnimatingView.frame is initial state for animating (beginning)
+        // SelectedCellImageViewSnapshot.frame is initial state for animating (beginning)
         // If we push DetailVC, it's cell frame relative to superview
-        // If we pop it, it's fromView's frame (whole view)
+        // If we pop it, it's imageview frame in DetailVC
+        
+        // Setup transparency of views for further animation
+
         if self.isPush {
-            animatingView.frame = self.originFrame
-            containerView.addSubview(toView)
+            toView.alpha = 0
+            fadeView.alpha = 0
+            self.selectedCellImageViewSnapshot.frame = self.cellOriginFrame
+            print("Push - snapshot frame: \(self.selectedCellImageViewSnapshot.frame)")
         } else {
-            containerView.insertSubview(toView, belowSubview: fromView)
+            fromView.alpha = 0
+            fadeView.alpha = 1
+            containerView.insertSubview(toView, belowSubview: fadeView)
+            print("Pop - snapshot frame: \(self.selectedCellImageViewSnapshot.frame)")
         }
-        
+     
         // FinalFrame is end state for animating
-        // If we push DetailVC, it's toView's frame (whole view)
+        // If we push DetailVC, it's detailImageViewFrame
         // If we pop it, it's cell frame relative to superview
-        let finalFrame = self.isPush ? containerView.frame : self.originFrame
-        
+        let finalFrameForImage = self.isPush ? self.detailImageViewFrame : self.cellOriginFrame
         // Animation setup (will be animated from animatingView.frame to finalFrame)
         UIView.animate(withDuration: transitionDuration(using: transitionContext),
-                       animations: { animatingView.frame = finalFrame }) { finished in
-            if !self.isPush {
-                fromView.removeFromSuperview()
-            }
+                       animations: {
+            print("Animating from \(self.selectedCellImageViewSnapshot.frame) to \(finalFrameForImage)")
+            self.selectedCellImageViewSnapshot.frame = finalFrameForImage
+            fadeView.alpha = self.isPush ? 1 : 0
+        }) { finished in
             // Animation is complete, user interface can be refreshed
+            toView.alpha = 1
+            self.selectedCellImageViewSnapshot.removeFromSuperview()
+            fadeView.removeFromSuperview()
             transitionContext.completeTransition(finished)
         }
     }

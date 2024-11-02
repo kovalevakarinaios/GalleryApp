@@ -110,8 +110,8 @@
 		02B624C12CD5182C00704E80 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				02B624982CCD3A0D00704E80 /* SceneDelegate.swift */,
 				02B624962CCD3A0D00704E80 /* AppDelegate.swift */,
+				02B624982CCD3A0D00704E80 /* SceneDelegate.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";

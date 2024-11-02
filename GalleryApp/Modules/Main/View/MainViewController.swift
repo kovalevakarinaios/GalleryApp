@@ -93,19 +93,21 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
                         cell.configureCell(image: image)
                     }
                 }
-                
             }
         }
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let detailViewController = DetailViewController(viewModel: viewModel, indexPath: indexPath)
         if let cell = collectionView.cellForItem(at: indexPath) {
             // Convert сell frame to frame relative to superview
             let originFrame = cell.superview?.convert(cell.frame, to: nil) ?? .zero
+            let snapshot = cell.snapshotView(afterScreenUpdates: true) ?? UIView()
             customNavigationDelegate.setOriginFrame(originFrame: originFrame)
+            customNavigationDelegate.setSnapshot(snapshot: snapshot)
+            customNavigationDelegate.setDetailImageViewFrame(frame: detailViewController.getImageViewFrame())
         }
-        let detailViewController = DetailViewController()
         self.navigationController?.pushViewController(detailViewController, animated: true)
     }
 }
