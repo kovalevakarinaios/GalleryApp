@@ -12,6 +12,11 @@ protocol RequestDelegate: AnyObject {
     func didUpdate(with state: ViewState)
 }
 
+enum PhotoType {
+    case regular
+    case thumb
+}
+
 enum ViewState {
     case isLoading
     case success
@@ -32,7 +37,7 @@ class ViewModel {
         }
     }
     
-    private var photos: [Photo] = []
+    private var photos: [PhotoModel] = []
     
     init() {
         self.viewState = .idle
@@ -45,15 +50,35 @@ extension ViewModel {
         self.photos.count
     }
     
-    func getThumbUrl(for indexPath: IndexPath) -> URL? {
-        guard let url = URL(string: self.photos[indexPath.row].urls.thumb) else {
-            return nil
+    func getUrl(photoType: PhotoType, for indexPath: IndexPath) -> URL? {
+        switch photoType {
+        case .regular:
+            guard let url = URL(string: self.photos[indexPath.row].urls.regular) else {
+                return nil
+            }
+            return url
+        case .thumb:
+            guard let url = URL(string: self.photos[indexPath.row].urls.thumb) else {
+                return nil
+            }
+            return url
         }
-        return url
+    }
+    
+    func getDescription(for indexPath: IndexPath) -> String {
+        self.photos[indexPath.row].generalDescription
     }
     
     func getRatio(for indexPath: IndexPath) -> CGFloat {
         CGFloat(self.photos[indexPath.row].height) / CGFloat(self.photos[indexPath.row].width)
+    }
+    
+    func getSize(for indexPath: IndexPath) -> CGSize {
+        CGSize(width: self.photos[indexPath.row].width, height: self.photos[indexPath.row].height)
+    }
+    
+    func getFavoriteStatus(for indexPath: IndexPath) -> Bool {
+        self.photos[indexPath.row].isFavorite
     }
 }
 
@@ -67,7 +92,15 @@ extension ViewModel {
             switch result {
             case .success(let success):
                 self.currentPage += 1
-                self.photos.append(contentsOf: success)
+                success.forEach { self.photos.append(PhotoModel(id: $0.id,
+                                                                createdAt: $0.createdAt,
+                                                                generalDescription: $0.generalDescription,
+                                                                urls: PhotoURLs(regular: $0.urls.regular, 
+                                                                                thumb: $0.urls.thumb),
+                                                                isFavorite: false,
+                                                                width: $0.width,
+                                                                height: $0.height))
+                }
                 self.viewState = .success
             case .failure(let failure):
                 self.viewState = .error

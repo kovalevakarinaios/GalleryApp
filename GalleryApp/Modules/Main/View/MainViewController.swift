@@ -86,7 +86,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             return UICollectionViewCell()
         }
         
-        if let url = self.viewModel.getThumbUrl(for: indexPath) {
+        if let url = self.viewModel.getUrl(photoType: .thumb, for: indexPath) {
             self.viewModel.loadImage(url: url) { image in
                 if let image = image {
                     DispatchQueue.main.async {

@@ -28,7 +28,7 @@ class CustomTransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning 
     
     // Transition animation duration
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        0.5
+        0.4
     }
     
     // Setup custom transition animation

@@ -13,122 +13,36 @@ class DetailViewController: UIViewController {
     private let viewModel: ViewModel
     private let indexPath: IndexPath
     
-    private lazy var handler: UIButton.ConfigurationUpdateHandler = { button in
-        switch button.state {
-        case .selected:
-            button.configuration?.baseForegroundColor = .red
-        default:
-            button.configuration?.baseForegroundColor = .white
-        }
-        
-    }
-    
-    private lazy var buttonConfiguration: UIButton.Configuration = {
-        var buttonConfiguration = UIButton.Configuration.filled()
-        buttonConfiguration.buttonSize = .large
-        buttonConfiguration.cornerStyle = .capsule
-        buttonConfiguration.baseBackgroundColor = .darkGray
-        return buttonConfiguration
+    private lazy var collectionView: UICollectionView = {
+        var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createLayout())
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        collectionView.isScrollEnabled = false
+        collectionView.register(DetailPhotoCell.self, forCellWithReuseIdentifier: DetailPhotoCell.identifier)
+        collectionView.dataSource = self
+        return collectionView
     }()
-    
-    private lazy var addToFavoriteButton: UIButton = {
-        var addToFavoriteButton = UIButton(configuration: self.buttonConfiguration)
-        addToFavoriteButton.translatesAutoresizingMaskIntoConstraints = false
-        addToFavoriteButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-        addToFavoriteButton.addTarget(self, action: #selector(self.addedToFavorite), for: .touchUpInside)
-        addToFavoriteButton.configurationUpdateHandler = self.handler
-        return addToFavoriteButton
-    }()
-    
-    private lazy var imageView: UIImageView = {
-        var imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-    
-    private lazy var verticalStackView: UIStackView = {
-        var verticalStackView = UIStackView()
-        verticalStackView.translatesAutoresizingMaskIntoConstraints = false
-        verticalStackView.axis = .vertical
-        verticalStackView.distribution = .fillProportionally
-        return verticalStackView
-    }()
-    
-    private lazy var descriptionLabel: UILabel = {
-        var descriptionLabel = UILabel()
-        return descriptionLabel
-    }()
-    
-    private lazy var creationDateLabel: UILabel = {
-        var creationDateLabel = UILabel()
-        return creationDateLabel
-    }()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .systemBackground
-        self.setupImageView()
-        self.setupStackView()
-        self.setupAddToFavoriteButton()
+        self.setupCollectionView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isHidden = false
-    }
- 
-    private func setupImageView() {
-        self.view.addSubview(self.imageView)
-        
-        if let url = self.viewModel.getThumbUrl(for: indexPath) {
-            self.viewModel.loadImage(url: url) { image in
-                if let image = image {
-                    DispatchQueue.main.async {
-                        self.imageView.image = image
-                    }
-                }
-            }
-        }
-        NSLayoutConstraint.activate([
-            self.imageView.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor),
-            self.imageView.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor),
-            self.imageView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            self.imageView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            self.imageView.heightAnchor.constraint(equalToConstant: 400)
-        ])
+        self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
     }
     
-    private func setupAddToFavoriteButton() {
-        self.view.addSubview(self.addToFavoriteButton)
+    private func setupCollectionView() {
+        self.view.addSubview(self.collectionView)
         
         NSLayoutConstraint.activate([
-            self.addToFavoriteButton.bottomAnchor.constraint(equalTo: self.imageView.bottomAnchor, constant: -10),
-            self.addToFavoriteButton.trailingAnchor.constraint(equalTo: self.imageView.trailingAnchor, constant: -10)
+            self.collectionView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
+            self.collectionView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
+            self.collectionView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.9),
+            self.collectionView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor)
         ])
-    }
-    
-    private func setupStackView() {
-        [self.descriptionLabel, self.creationDateLabel].forEach { self.verticalStackView.addArrangedSubview($0) }
-        self.view.addSubview(self.verticalStackView)
-        
-        NSLayoutConstraint.activate([
-            self.verticalStackView.topAnchor.constraint(equalTo: self.imageView.bottomAnchor, constant: 5),
-            self.verticalStackView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor, constant: 5),
-            self.verticalStackView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor)
-        ])
-    }
-    
-    private func setupLabels() {
-//        self.descriptionLabel.text = self.viewModel[self.indexPath].getDe
-    }
-    
-    @objc func addedToFavorite() {
-        self.addToFavoriteButton.isSelected.toggle()
-    }
-    
-    func getImageViewFrame() -> CGRect {
-        self.view.layoutIfNeeded()
-        return self.imageView.frame
     }
     
     init(viewModel: ViewModel, indexPath: IndexPath) {
@@ -139,5 +53,106 @@ class DetailViewController: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func getImageViewFrame() -> CGRect {
+        self.view.layoutIfNeeded()
+        guard let layoutAttributes = collectionView.layoutAttributesForItem(at: IndexPath(row: 0, section: 0)) else {
+            return CGRect(x: 100, y: 100, width: 50, height: 50)
+        }
+        
+        let cellFrameInCollectionView = layoutAttributes.frame
+        let cellFrameInSuperview = collectionView.convert(cellFrameInCollectionView, to: self.view)
+        let imageViewSize = CGSize(width: cellFrameInSuperview.width,
+                                   height: cellFrameInSuperview.height * 0.65)
+        let imageViewOriginX = cellFrameInSuperview.origin.x + 16
+        let imageViewOriginY = cellFrameInSuperview.origin.y +
+        (cellFrameInSuperview.height - imageViewSize.height) / 2 + 12
+        
+        let imageViewFrameInSuperview = CGRect(origin: CGPoint(x: imageViewOriginX, y: imageViewOriginY), size: imageViewSize)
+        
+        let imageInSuperview = getImageCoordinatesInSuperview(imageViewFrame: imageViewFrameInSuperview,
+                                                              imageSize: self.viewModel.getSize(for: indexPath))
+        print("imageViewFrameInSuperview \(imageViewFrameInSuperview)")
+        return imageInSuperview
+        
+    }
+    
+    private func getImageCoordinatesInSuperview(imageViewFrame: CGRect, imageSize: CGSize) -> CGRect {
+        let imageViewWidth = imageViewFrame.size.width
+        let imageViewHeight = imageViewFrame.size.height
+        
+        let imageWidth = imageSize.width
+        let imageHeight = imageSize.height
+
+        let imageViewRatio = imageViewWidth / imageViewHeight
+        let imageRatio = imageWidth / imageHeight
+        
+        var scale: CGFloat
+        var scaledImageSize: CGSize
+        var xOffset: CGFloat = 0
+        var yOffset: CGFloat = 0
+        
+        if imageViewRatio > imageRatio {
+            scale = imageViewHeight / imageHeight
+            scaledImageSize = CGSize(width: imageWidth * scale, height: imageViewHeight)
+            xOffset = (imageViewWidth - scaledImageSize.width) / 2
+        } else {
+            scale = imageViewWidth / imageWidth
+            scaledImageSize = CGSize(width: imageViewWidth, height: imageHeight * scale)
+            yOffset = (imageViewHeight - scaledImageSize.height) / 2
+        }
+
+        let imageX = imageViewFrame.origin.x + xOffset
+        let imageY = imageViewFrame.origin.y + yOffset
+        let imageRect = CGRect(x: imageX, y: imageY, width: scaledImageSize.width, height: scaledImageSize.height)
+
+        return imageRect
+    }
+}
+
+extension DetailViewController {
+    private func createLayout() -> UICollectionViewCompositionalLayout {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), 
+                                              heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.92),
+                                               heightDimension: .fractionalHeight(0.8))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        group.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 8.0, bottom: 0, trailing: 8.0)
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.orthogonalScrollingBehavior = .groupPagingCentered
+      
+        let layout = UICollectionViewCompositionalLayout(section: section)
+        return layout
+    }
+}
+
+extension DetailViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        self.viewModel.numberOfItems
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: DetailPhotoCell.identifier,
+                                                            for: indexPath) as? DetailPhotoCell else {
+            return UICollectionViewCell()
+        }
+        
+        if let url = self.viewModel.getUrl(photoType: .regular, for: indexPath) {
+            self.viewModel.loadImage(url: url) { image in
+                if let image = image {
+                    DispatchQueue.main.async {
+                        cell.configureCell(description:  self.viewModel.getDescription(for: indexPath),
+                                                    image: image,
+                                                    isFavorite: self.viewModel.getFavoriteStatus(for: indexPath))
+                    }
+                }
+            }
+        }
+        return cell
     }
 }
