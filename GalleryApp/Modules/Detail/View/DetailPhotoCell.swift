@@ -8,9 +8,14 @@
 import Foundation
 import UIKit
 
+protocol DetailPhotoCellDelegate: AnyObject {
+    func didUpdateItem(cell: DetailPhotoCell)
+}
+
 class DetailPhotoCell: UICollectionViewCell {
     
     static let identifier = "DetailPhotoCell"
+    weak var delegate: DetailPhotoCellDelegate?
     
     private lazy var handler: UIButton.ConfigurationUpdateHandler = { button in
         switch button.state {
@@ -81,6 +86,7 @@ class DetailPhotoCell: UICollectionViewCell {
         super.prepareForReuse()
         self.imageView.image = nil
         self.descriptionLabel.text = nil
+        self.creationDateLabel.text = nil
         self.addToFavoriteButton.isSelected = false
     }
 
@@ -119,12 +125,13 @@ class DetailPhotoCell: UICollectionViewCell {
     @objc 
     func addedToFavorite() {
         self.addToFavoriteButton.isSelected.toggle()
+        self.delegate?.didUpdateItem(cell: self)
     }
 
-    func configureCell(description: String, image: UIImage, isFavorite: Bool) {
-        self.descriptionLabel.text = description
-        self.imageView.image = image
-        isFavorite ? (self.addToFavoriteButton.isSelected = true) : (self.addToFavoriteButton.isSelected = false)
+    func configureCell(with viewModel: DetailCellViewModel) {
+        self.imageView.sd_setImage(with: viewModel.image)
+        self.descriptionLabel.text = viewModel.description
+        self.creationDateLabel.text = viewModel.createdDate
     }
 
     func returnImageViewFrame() -> CGRect {

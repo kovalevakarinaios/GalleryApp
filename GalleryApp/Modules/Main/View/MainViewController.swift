@@ -11,14 +11,14 @@ class MainViewController: UIViewController {
     
     private let customNavigationDelegate = CustomNavigationControllerDelegate()
     // Think about refactoring (D)
-    private let viewModel = ViewModel()
+    private let viewModel = MainViewModel()
     
     private lazy var collectionView: UICollectionView = {
         let layout = GalleryLayout()
         layout.delegate = self
         
         let collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
-        collectionView.register(PhotoCell.self, forCellWithReuseIdentifier: PhotoCell.identifier)
+        collectionView.register(MainPhotoCell.self, forCellWithReuseIdentifier: MainPhotoCell.identifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -28,25 +28,21 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .systemBackground
-        self.setupViewModel()
         self.setupCollectionView()
-        self.setupNavigationController()
+        self.setupDelegates()
+        self.viewModel.loadPhotos()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isHidden = true
     }
-    
-    private func setupViewModel() {
+
+    private func setupDelegates() {
         self.viewModel.delegate = self
-        self.viewModel.loadPhotos()
-    }
-    
-    private func setupNavigationController() {
         self.navigationController?.delegate = self.customNavigationDelegate
     }
-    
+
     private func setupCollectionView() {
         self.view.addSubview(self.collectionView)
         
@@ -58,7 +54,7 @@ class MainViewController: UIViewController {
         ])
     }
 }
-
+// Вынести в CellViewModel
 extension MainViewController: GalleryLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, ratioForPhotoAtIndexPath indexPath: IndexPath) -> CGFloat {
         self.viewModel.getRatio(for: indexPath)
@@ -81,32 +77,24 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCell.identifier,
-                                                            for: indexPath) as? PhotoCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainPhotoCell.identifier,
+                                                            for: indexPath) as? MainPhotoCell else {
             return UICollectionViewCell()
         }
-        
-        if let url = self.viewModel.getUrl(photoType: .thumb, for: indexPath) {
-            self.viewModel.loadImage(url: url) { image in
-                if let image = image {
-                    DispatchQueue.main.async {
-                        cell.configureCell(image: image)
-                    }
-                }
-            }
-        }
+        cell.configureCell(with: self.viewModel.getMainCellViewModel(at: indexPath))
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let detailViewController = DetailViewController(viewModel: viewModel, indexPath: indexPath)
+        let detailViewController = DetailViewController(viewModel: self.viewModel.prepareDetailViewModel(at: indexPath))
         if let cell = collectionView.cellForItem(at: indexPath) {
             // Convert сell frame to frame relative to superview
             let originFrame = cell.superview?.convert(cell.frame, to: nil) ?? .zero
             let snapshot = cell.snapshotView(afterScreenUpdates: true) ?? UIView()
-            customNavigationDelegate.setOriginFrame(originFrame: originFrame)
-            customNavigationDelegate.setSnapshot(snapshot: snapshot)
-            customNavigationDelegate.setDetailImageViewFrame(frame: detailViewController.getImageViewFrame())
+            
+            customNavigationDelegate.updateInfoForTransitionAnimation(cellOriginFrame: originFrame,
+                                                                      snapshot: snapshot,
+                                                                      frame: detailViewController.getImageViewFrame())
         }
         self.navigationController?.pushViewController(detailViewController, animated: true)
     }
@@ -119,7 +107,7 @@ extension MainViewController: RequestDelegate {
             switch state {
             case .isLoading:
                 // showLoadingIndicator
-                print("showLoadingIndicator")
+                print("showLoadingIndicatorOnMainScreenInsteadOfCollectionView")
             case .success:
                 print("Success")
                 self.collectionView.reloadData()

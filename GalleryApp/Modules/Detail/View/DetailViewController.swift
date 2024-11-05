@@ -10,8 +10,7 @@ import UIKit
 
 class DetailViewController: UIViewController {
     
-    private let viewModel: ViewModel
-    private let indexPath: IndexPath
+    private let viewModel: DetailViewModel
     
     private lazy var collectionView: UICollectionView = {
         var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createLayout())
@@ -25,15 +24,16 @@ class DetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .systemBackground
+        self.viewModel.delegate = self
+        self.viewModel.refreshData()
         self.setupCollectionView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isHidden = false
-        self.collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
     }
-    
+
     private func setupCollectionView() {
         self.view.addSubview(self.collectionView)
         
@@ -45,9 +45,8 @@ class DetailViewController: UIViewController {
         ])
     }
     
-    init(viewModel: ViewModel, indexPath: IndexPath) {
+    init(viewModel: DetailViewModel) {
         self.viewModel = viewModel
-        self.indexPath = indexPath
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -69,10 +68,12 @@ class DetailViewController: UIViewController {
         let imageViewOriginY = cellFrameInSuperview.origin.y +
         (cellFrameInSuperview.height - imageViewSize.height) / 2 + 12
         
-        let imageViewFrameInSuperview = CGRect(origin: CGPoint(x: imageViewOriginX, y: imageViewOriginY), size: imageViewSize)
+        let imageViewFrameInSuperview = CGRect(origin: CGPoint(x: imageViewOriginX, 
+                                                               y: imageViewOriginY),
+                                               size: imageViewSize)
         
         let imageInSuperview = getImageCoordinatesInSuperview(imageViewFrame: imageViewFrameInSuperview,
-                                                              imageSize: self.viewModel.getSize(for: indexPath))
+                                                              imageSize: self.viewModel.getSize())
         print("imageViewFrameInSuperview \(imageViewFrameInSuperview)")
         return imageInSuperview
         
@@ -141,18 +142,38 @@ extension DetailViewController: UICollectionViewDataSource {
                                                             for: indexPath) as? DetailPhotoCell else {
             return UICollectionViewCell()
         }
-        
-        if let url = self.viewModel.getUrl(photoType: .regular, for: indexPath) {
-            self.viewModel.loadImage(url: url) { image in
-                if let image = image {
-                    DispatchQueue.main.async {
-                        cell.configureCell(description:  self.viewModel.getDescription(for: indexPath),
-                                                    image: image,
-                                                    isFavorite: self.viewModel.getFavoriteStatus(for: indexPath))
-                    }
-                }
+        cell.delegate = self
+        cell.configureCell(with: self.viewModel.getDetailCellViewModel(at: indexPath))
+        return cell
+    }
+}
+
+extension DetailViewController: DetailPhotoCellDelegate {
+    func didUpdateItem(cell: DetailPhotoCell) {
+        guard let indexPath = self.collectionView.indexPath(for: cell) else { return }
+//        self.viewModel.changeFavoriteStatus(for: indexPath)
+    }
+}
+
+// MARK: RequestDelegate - ViewModel
+extension DetailViewController: RequestDelegate {
+    func didUpdate(with state: ViewState) {
+        DispatchQueue.main.async {
+            switch state {
+            case .isLoading:
+                // showLoadingIndicator
+                print("showLoadingIndicatorOnDetailScreenInsteadOfCollectionView")
+            case .success:
+                print("Success")
+                self.collectionView.reloadData()
+                self.collectionView.scrollToItem(at: self.viewModel.getCurrentItemIndexPath(),
+                                                 at: .centeredHorizontally, animated: true)
+            case .error:
+                // showAlertController
+                print("showAlertController")
+            case .idle:
+                break
             }
         }
-        return cell
     }
 }

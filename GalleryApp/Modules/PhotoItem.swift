@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PhotoJSONModel: Codable, Hashable {
+struct PhotoItem: Codable, Hashable {
     let id: String
     let likes: Int
     let width: Int

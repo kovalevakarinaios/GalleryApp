@@ -36,15 +36,9 @@ class CustomNavigationControllerDelegate: NSObject, UINavigationControllerDelega
         }
     }
     
-    func setOriginFrame(originFrame: CGRect) {
-        self.cellOriginFrame = originFrame
-    }
-    
-    func setSnapshot(snapshot: UIView) {
+    func updateInfoForTransitionAnimation(cellOriginFrame: CGRect, snapshot: UIView, frame: CGRect) {
+        self.cellOriginFrame = cellOriginFrame
         self.snapshot = snapshot
-    }
-    
-    func setDetailImageViewFrame(frame: CGRect) {
         self.detailImageViewFrame = frame
     }
 }

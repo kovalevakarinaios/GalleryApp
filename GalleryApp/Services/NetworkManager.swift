@@ -45,7 +45,7 @@ class NetworkManager {
         return urlRequest
     }
     
-    func getPhotos(currentPage: Int, completion: @escaping (Result<[PhotoJSONModel], Error>) -> Void) {
+    func getPhotos(currentPage: Int, completion: @escaping (Result<[PhotoItem], Error>) -> Void) {
         
         guard let url = createURL(currentPage: currentPage) else {
             completion(.failure(NetworkError.invalidURL))
@@ -63,7 +63,7 @@ class NetworkManager {
             }
             
             do {
-                let decodedData = try JSONDecoder().decode([PhotoJSONModel].self, from: data)
+                let decodedData = try JSONDecoder().decode([PhotoItem].self, from: data)
                 completion(.success(decodedData))
             } catch {
                 completion(.failure(NetworkError.decodingError))

@@ -6,8 +6,9 @@
 //
 
 import UIKit
+import SDWebImage
 
-class PhotoCell: UICollectionViewCell {
+class MainPhotoCell: UICollectionViewCell {
     
     static let identifier = "PhotoCell"
     
@@ -28,7 +29,7 @@ class PhotoCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        self.imageView.image = nil
+//        self.imageView.image = nil
     }
     
     private func setupImageView() {
@@ -42,7 +43,7 @@ class PhotoCell: UICollectionViewCell {
         ])
     }
     
-    func configureCell(image: UIImage) {
-        self.imageView.image = image
+    func configureCell(with viewModel: MainCellViewModel) {
+        self.imageView.sd_setImage(with: viewModel.image)
     }
 }
