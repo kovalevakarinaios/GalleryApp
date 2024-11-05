@@ -14,6 +14,21 @@ enum NetworkError: Error {
     case noData
     case decodingError
     case invalidResponse
+    
+    var description: String {
+        switch self {
+        case .invalidURL:
+            return "URL is invalid"
+        case .urlRequestFailed:
+            return "URL request is failed"
+        case .noData:
+            return "Data could not be received from the server"
+        case .decodingError:
+            return "Decoding Error"
+        case .invalidResponse:
+            return "Response is invalid"
+        }
+    }
 }
 
 class NetworkManager {
@@ -45,6 +60,33 @@ class NetworkManager {
         return urlRequest
     }
     
+    // General Logic of network request
+    private func handleRequest(url: URL, completion: @escaping (Result<Data, Error>) -> Void) {
+        guard let urlRequest = createRequest(url: url) else {
+            completion(.failure(NetworkError.urlRequestFailed))
+            return
+        }
+        
+        let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+            }
+            
+            guard let response = response as? HTTPURLResponse else {
+                completion(.failure(NetworkError.invalidResponse))
+                return
+            }
+            
+            guard let data = data else {
+                completion(.failure(NetworkError.noData))
+                return
+            }
+            
+            completion(.success(data))
+        }
+        task.resume()
+    }
+    
     func getPhotos(currentPage: Int, completion: @escaping (Result<[PhotoItem], Error>) -> Void) {
         
         guard let url = createURL(currentPage: currentPage) else {
@@ -52,61 +94,35 @@ class NetworkManager {
             return
         }
         
-        guard let urlRequest = createRequest(url: url) else {
-            completion(.failure(NetworkError.urlRequestFailed))
-            return }
-        
-        let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-            guard let data = data else {
-                completion(.failure(NetworkError.noData))
-                return
-            }
-            
-            do {
-                let decodedData = try JSONDecoder().decode([PhotoItem].self, from: data)
-                completion(.success(decodedData))
-            } catch {
-                completion(.failure(NetworkError.decodingError))
-            }
-            
-            guard let response = response as? HTTPURLResponse else {
-                completion(.failure(NetworkError.invalidResponse))
-                return }
-            
-            if let error = error {
+        self.handleRequest(url: url) { result in
+            switch result {
+            case .success(let data):
+                do {
+                    let decodedData = try JSONDecoder().decode([PhotoItem].self, from: data)
+                    completion(.success(decodedData))
+                } catch {
+                    completion(.failure(NetworkError.decodingError))
+                }
+            case .failure(let error):
                 completion(.failure(error))
             }
         }
-        task.resume()
     }
     
     func downloadImage(url: URL, completion: @escaping (Result<Data, Error>) -> Void) {
-       
-        guard let urlRequest = createRequest(url: url) else {
-            completion(.failure(NetworkError.urlRequestFailed))
-            return }
-        
-        let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-            guard let data = data else {
-                completion(.failure(NetworkError.noData))
-                return
-            }
-            
-            do {
-                let data = try Data(contentsOf: url)
-                completion(.success(data))
-            } catch {
-                completion(.failure(NetworkError.decodingError))
-            }
-            
-            guard let response = response as? HTTPURLResponse else {
-                completion(.failure(NetworkError.invalidResponse))
-                return }
-            
-            if let error = error {
+ 
+        self.handleRequest(url: url) { result in
+            switch result {
+            case .success(let data):
+                do {
+                    let data = try Data(contentsOf: url)
+                    completion(.success(data))
+                } catch {
+                    completion(.failure(NetworkError.decodingError))
+                }
+            case .failure(let error):
                 completion(.failure(error))
             }
         }
-        task.resume()
     }
 }
