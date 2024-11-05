@@ -23,8 +23,6 @@ class DetailViewModel {
         }
     }
 
-   
-
     init(currentPage: Int, indexPath: IndexPath, detailCellViewModels: [DetailCellViewModel]) {
         self.viewState = .idle
         self.currentPage = currentPage

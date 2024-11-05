@@ -10,21 +10,22 @@ import UIKit
 
 class MainCellViewModel {
     
-    private var id: String
+    var id: String
     var image: URL?
-//    var isFavourite: Bool?
+    var isFavourite: Bool?
 
     init(item: PhotoItem) {
         self.id = item.id
         self.image = self.makeImageURL(stringURL: item.urls.thumb)
+        self.isFavourite = self.checkFavoriteStatus(id: self.id)
     }
     
     private func makeImageURL(stringURL: String) -> URL? {
         URL(string: stringURL)
     }
     
-    private func checkFavoriteStatus(id: String) -> Bool {
-        // Сходи в кордату, узнай тру или фолс и присвой переменной это значение
-        false
+    func checkFavoriteStatus(id: String) -> Bool {
+        print("MainCellViewModel: checkFavouritestatus")
+        return CoreDataHelper.isFavourite(id: id)
     }
 }

@@ -28,21 +28,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "GalleryApp")
+        let container = NSPersistentContainer(name: "FavouritePhotoModel")
         container.loadPersistentStores { _, _ in
             
         }
         return container
     }()
-    
-    func saveContext() {
-        let context = persistentContainer.viewContext
-        if context.hasChanges {
-            do {
-                try context.save()
-            } catch {
-                
-            }
-        }
-    }
 }

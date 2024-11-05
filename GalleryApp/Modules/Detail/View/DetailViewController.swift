@@ -142,16 +142,8 @@ extension DetailViewController: UICollectionViewDataSource {
                                                             for: indexPath) as? DetailPhotoCell else {
             return UICollectionViewCell()
         }
-        cell.delegate = self
         cell.configureCell(with: self.viewModel.getDetailCellViewModel(at: indexPath))
         return cell
-    }
-}
-
-extension DetailViewController: DetailPhotoCellDelegate {
-    func didUpdateItem(cell: DetailPhotoCell) {
-        guard let indexPath = self.collectionView.indexPath(for: cell) else { return }
-//        self.viewModel.changeFavoriteStatus(for: indexPath)
     }
 }
 

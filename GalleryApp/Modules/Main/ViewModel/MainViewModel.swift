@@ -77,27 +77,12 @@ extension MainViewModel {
             return url
         }
     }
-    // нужно ли
-    func getDescription(for indexPath: IndexPath) -> String {
-        self.dataSource[indexPath.row].generalDescription
-    }
+
     // нужно ли
     func getRatio(for indexPath: IndexPath) -> CGFloat {
         CGFloat(self.dataSource[indexPath.row].height) / CGFloat(self.dataSource[indexPath.row].width)
     }
-    // нужно ли
-
-    // нужно ли
-    func getFavoriteStatus(for indexPath: IndexPath) -> Bool {
-//        self.dataSource[indexPath.row].isFavorite
-        return false
-    }
-    // нужно ли
-    func changeFavoriteStatus(for indexPath: IndexPath) {
-//        self.dataSource[indexPath.row].isFavorite.toggle()
-    }
 }
-
 // MARK: Setup Data Loading
 extension MainViewModel {
     func loadPhotos() {

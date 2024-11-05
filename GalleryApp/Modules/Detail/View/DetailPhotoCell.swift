@@ -8,14 +8,11 @@
 import Foundation
 import UIKit
 
-protocol DetailPhotoCellDelegate: AnyObject {
-    func didUpdateItem(cell: DetailPhotoCell)
-}
-
 class DetailPhotoCell: UICollectionViewCell {
     
     static let identifier = "DetailPhotoCell"
-    weak var delegate: DetailPhotoCellDelegate?
+    
+    var cellViewModel: DetailCellViewModel?
     
     private lazy var handler: UIButton.ConfigurationUpdateHandler = { button in
         switch button.state {
@@ -38,7 +35,7 @@ class DetailPhotoCell: UICollectionViewCell {
         var addToFavoriteButton = UIButton(configuration: self.buttonConfiguration)
         addToFavoriteButton.translatesAutoresizingMaskIntoConstraints = false
         addToFavoriteButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-        addToFavoriteButton.addTarget(self, action: #selector(self.addedToFavorite), for: .touchUpInside)
+        addToFavoriteButton.addTarget(self, action: #selector(self.tapFavouriteButton), for: .touchUpInside)
         addToFavoriteButton.configurationUpdateHandler = self.handler
         return addToFavoriteButton
     }()
@@ -123,15 +120,17 @@ class DetailPhotoCell: UICollectionViewCell {
     }
 
     @objc 
-    func addedToFavorite() {
+    func tapFavouriteButton() {
+        self.cellViewModel?.toogleFavourite()
         self.addToFavoriteButton.isSelected.toggle()
-        self.delegate?.didUpdateItem(cell: self)
     }
 
     func configureCell(with viewModel: DetailCellViewModel) {
         self.imageView.sd_setImage(with: viewModel.image)
         self.descriptionLabel.text = viewModel.description
         self.creationDateLabel.text = viewModel.createdDate
+        self.addToFavoriteButton.isSelected = viewModel.isFavourite ?? false
+        self.cellViewModel = viewModel
     }
 
     func returnImageViewFrame() -> CGRect {

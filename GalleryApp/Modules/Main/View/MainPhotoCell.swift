@@ -17,6 +17,13 @@ class MainPhotoCell: UICollectionViewCell {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
+    
+    private lazy var favouriteStatusImageView: UIImageView = {
+        var favouriteStatusImageView = UIImageView()
+        favouriteStatusImageView.translatesAutoresizingMaskIntoConstraints = false
+        favouriteStatusImageView.tintColor = .red
+        return favouriteStatusImageView
+    }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -29,7 +36,8 @@ class MainPhotoCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-//        self.imageView.image = nil
+        self.imageView.image = nil
+        self.favouriteStatusImageView.image = nil
     }
     
     private func setupImageView() {
@@ -43,7 +51,25 @@ class MainPhotoCell: UICollectionViewCell {
         ])
     }
     
+    private func setupFavouriteImageView() {
+        self.contentView.addSubview(self.favouriteStatusImageView)
+        self.favouriteStatusImageView.image = UIImage(systemName: "heart.fill")
+        
+        NSLayoutConstraint.activate([
+            self.favouriteStatusImageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
+            self.favouriteStatusImageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
+            self.favouriteStatusImageView.widthAnchor.constraint(equalTo: self.contentView.heightAnchor,
+                                                                 multiplier: 0.2),
+            self.favouriteStatusImageView.widthAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.height / 15),
+            self.favouriteStatusImageView.heightAnchor.constraint(equalTo: self.contentView.heightAnchor,
+                                                                  multiplier: 0.2),
+            self.favouriteStatusImageView.heightAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.height / 15)
+        ])
+    }
+    
     func configureCell(with viewModel: MainCellViewModel) {
+        let viewModel = viewModel
         self.imageView.sd_setImage(with: viewModel.image)
+        viewModel.checkFavoriteStatus(id: viewModel.id) ? self.setupFavouriteImageView() : nil
     }
 }

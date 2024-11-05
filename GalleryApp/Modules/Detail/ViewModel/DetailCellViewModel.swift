@@ -6,12 +6,13 @@
 //
 
 import Foundation
+import SDWebImage
 
 class DetailCellViewModel {
     
     var id: String
     var image: URL?
-//    var isFavourite: Bool?
+    var isFavourite: Bool?
     var description: String
     var createdDate: String
     var width: Int
@@ -24,6 +25,7 @@ class DetailCellViewModel {
         self.width = item.width
         self.height = item.height
         self.image = self.makeImageURL(stringURL: item.urls.regular)
+        self.isFavourite = self.checkFavoriteStatus(id: self.id)
     }
     
     private func makeImageURL(stringURL: String) -> URL? {
@@ -31,7 +33,12 @@ class DetailCellViewModel {
     }
     
     private func checkFavoriteStatus(id: String) -> Bool {
-        // Сходи в кордату, узнай тру или фолс и присвой переменной это значение
-        false
+        print("DetailCellViewModel: checkFavouritestatus")
+        return CoreDataHelper.isFavourite(id: id)
+    }
+    
+    func toogleFavourite() {
+        isFavourite?.toggle()
+        CoreDataHelper.toogleFavorite(id: id, image: image)
     }
 }
