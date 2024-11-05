@@ -96,7 +96,10 @@ extension MainViewModel {
                 self.dataSource.append(contentsOf: success)
                 self.mainViewModelCells.append(contentsOf: success.map { MainCellViewModel(item: $0) })
                 self.viewState = .success
-            case .failure(let failure):
+            case .failure(let failure as NetworkError):
+                print(failure.description)
+                self.viewState = .error
+            case .failure(_):
                 self.viewState = .error
             }
         }

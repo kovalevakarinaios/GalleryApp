@@ -15,6 +15,32 @@ enum NetworkError: Error {
     case decodingError
     case invalidResponse
     
+    enum ResponseError: Error {
+        case missingPermissions
+        case urlRequestFailed
+        case invalidAccessToken
+        case serverError
+        case notFound
+        case unknownResponseError(statusCode: Int)
+        
+        var description: String {
+            switch self {
+            case .missingPermissions:
+                return "Missing permissions to perform request"
+            case .urlRequestFailed:
+                return "The request was unacceptable, ex. due to missing a required parameter"
+            case .invalidAccessToken:
+                return "Invalid Access Token"
+            case .serverError:
+                return "Something went wrong on server side"
+            case .notFound:
+                return "The requested resource doesn’t exist"
+            case .unknownResponseError(let statusCode):
+                return "Other response error, statusCode - \(statusCode)"
+            }
+        }
+    }
+    
     var description: String {
         switch self {
         case .invalidURL:
@@ -63,6 +89,7 @@ class NetworkManager {
     // General Logic of network request
     private func handleRequest(url: URL, completion: @escaping (Result<Data, Error>) -> Void) {
         guard let urlRequest = createRequest(url: url) else {
+            print("Error - \(NetworkError.urlRequestFailed.description)")
             completion(.failure(NetworkError.urlRequestFailed))
             return
         }
@@ -72,9 +99,25 @@ class NetworkManager {
                 completion(.failure(error))
             }
             
-            guard let response = response as? HTTPURLResponse else {
+            if let response = response as? HTTPURLResponse {
+                switch response.statusCode {
+                case 200...299:
+                    print("Response is successfull")
+                case 400:
+                    completion(.failure(NetworkError.ResponseError.urlRequestFailed))
+                case 401:
+                    completion(.failure(NetworkError.ResponseError.invalidAccessToken))
+                case 403:
+                    completion(.failure(NetworkError.ResponseError.missingPermissions))
+                case 404:
+                    completion(.failure(NetworkError.ResponseError.notFound))
+                case 500...599:
+                    completion(.failure(NetworkError.ResponseError.serverError))
+                default:
+                    completion(.failure(NetworkError.ResponseError.unknownResponseError(statusCode: response.statusCode)))
+                }
+            } else {
                 completion(.failure(NetworkError.invalidResponse))
-                return
             }
             
             guard let data = data else {
@@ -100,7 +143,7 @@ class NetworkManager {
                 do {
                     let decodedData = try JSONDecoder().decode([PhotoItem].self, from: data)
                     completion(.success(decodedData))
-                } catch {
+                } catch let decodingError {
                     completion(.failure(NetworkError.decodingError))
                 }
             case .failure(let error):
@@ -110,16 +153,11 @@ class NetworkManager {
     }
     
     func downloadImage(url: URL, completion: @escaping (Result<Data, Error>) -> Void) {
- 
+        
         self.handleRequest(url: url) { result in
             switch result {
             case .success(let data):
-                do {
-                    let data = try Data(contentsOf: url)
-                    completion(.success(data))
-                } catch {
-                    completion(.failure(NetworkError.decodingError))
-                }
+                completion(.success(data))
             case .failure(let error):
                 completion(.failure(error))
             }

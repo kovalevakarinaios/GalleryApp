@@ -94,7 +94,7 @@ class CoreDataHelper {
             SDWebImageManager.shared.loadImage(with: image,
                                                options: .highPriority,
                                                progress: nil
-            ) { image, data, error, _, _, _ in
+            ) { image, _, error, _, _, _ in
                 if let error = error {
                     print("Failed to load image data with SDWebImage: \(error)")
                 } else {
