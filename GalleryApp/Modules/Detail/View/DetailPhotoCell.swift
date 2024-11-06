@@ -11,6 +11,8 @@ import UIKit
 class DetailPhotoCell: UICollectionViewCell {
     
     static let identifier = "DetailPhotoCell"
+
+    private var imageHeightConstraint: NSLayoutConstraint!
     
     var cellViewModel: DetailCellViewModel?
     
@@ -43,7 +45,6 @@ class DetailPhotoCell: UICollectionViewCell {
     private lazy var imageView: UIImageView = {
         var imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     
@@ -58,7 +59,6 @@ class DetailPhotoCell: UICollectionViewCell {
     private lazy var descriptionLabel: UILabel = {
         var descriptionLabel = UILabel()
         descriptionLabel.numberOfLines = 0
-        descriptionLabel.textAlignment = .center
         return descriptionLabel
     }()
     
@@ -89,12 +89,11 @@ class DetailPhotoCell: UICollectionViewCell {
 
     private func setupImageView() {
         self.contentView.addSubview(self.imageView)
-        
+
         NSLayoutConstraint.activate([
-            self.imageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor),
-            self.imageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
-            self.imageView.heightAnchor.constraint(equalTo: self.contentView.heightAnchor, multiplier: 0.6),
-            self.imageView.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor)
+            self.imageView.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor),
+            self.imageView.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor),
+            self.imageView.widthAnchor.constraint(equalTo: self.contentView.widthAnchor, multiplier: 0.9)
         ])
     }
     
@@ -105,8 +104,8 @@ class DetailPhotoCell: UICollectionViewCell {
         
         NSLayoutConstraint.activate([
             self.verticalStackView.topAnchor.constraint(equalTo: self.imageView.bottomAnchor, constant: 15),
-            self.verticalStackView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor, constant: 10),
-            self.verticalStackView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -10)
+            self.verticalStackView.widthAnchor.constraint(equalTo: self.imageView.widthAnchor),
+            self.verticalStackView.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor)
         ])
     }
     
@@ -114,8 +113,8 @@ class DetailPhotoCell: UICollectionViewCell {
         self.contentView.addSubview(self.addToFavoriteButton)
         
         NSLayoutConstraint.activate([
-            self.addToFavoriteButton.trailingAnchor.constraint(equalTo: self.imageView.trailingAnchor),
-            self.addToFavoriteButton.bottomAnchor.constraint(equalTo: self.imageView.bottomAnchor)
+            self.addToFavoriteButton.trailingAnchor.constraint(equalTo: self.imageView.trailingAnchor, constant: -10),
+            self.addToFavoriteButton.bottomAnchor.constraint(equalTo: self.imageView.bottomAnchor, constant: -10)
         ])
     }
 
@@ -126,11 +125,24 @@ class DetailPhotoCell: UICollectionViewCell {
     }
 
     func configureCell(with viewModel: DetailCellViewModel) {
+        self.cellViewModel = viewModel
         self.imageView.sd_setImage(with: viewModel.image)
         self.descriptionLabel.text = viewModel.description
-        self.creationDateLabel.text = viewModel.createdDate
+        self.creationDateLabel.text = "Created " + viewModel.createdDate
         self.addToFavoriteButton.isSelected = viewModel.isFavourite ?? false
-        self.cellViewModel = viewModel
+  
+        self.updateImageConstraints(withAspectRatio: viewModel.aspectRatio)
+    }
+    
+    private func updateImageConstraints(withAspectRatio aspectRatio: CGFloat) {
+        if let heightConstraint = imageHeightConstraint {
+            NSLayoutConstraint.deactivate([heightConstraint])
+        }
+
+        imageHeightConstraint = imageView.heightAnchor.constraint(equalTo: self.imageView.widthAnchor,
+                                                                  multiplier: aspectRatio)
+        
+        NSLayoutConstraint.activate([imageHeightConstraint])
     }
 
     func returnImageViewFrame() -> CGRect {

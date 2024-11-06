@@ -56,14 +56,10 @@ class MainPhotoCell: UICollectionViewCell {
         self.favouriteStatusImageView.image = UIImage(systemName: "heart.fill")
         
         NSLayoutConstraint.activate([
-            self.favouriteStatusImageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor),
-            self.favouriteStatusImageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor),
-            self.favouriteStatusImageView.widthAnchor.constraint(equalTo: self.contentView.heightAnchor,
-                                                                 multiplier: 0.2),
-            self.favouriteStatusImageView.widthAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.height / 15),
-            self.favouriteStatusImageView.heightAnchor.constraint(equalTo: self.contentView.heightAnchor,
-                                                                  multiplier: 0.2),
-            self.favouriteStatusImageView.heightAnchor.constraint(lessThanOrEqualToConstant: UIScreen.main.bounds.height / 15)
+            self.favouriteStatusImageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -5),
+            self.favouriteStatusImageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor, constant: -5),
+            self.favouriteStatusImageView.widthAnchor.constraint(equalToConstant: 30),
+            self.favouriteStatusImageView.heightAnchor.constraint(equalToConstant: 30)
         ])
     }
     

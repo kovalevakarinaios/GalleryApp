@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0217B7722CDC201600871DA0 /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0217B7712CDC201500871DA0 /* DateFormatter.swift */; };
 		023FB8A52CD972EB002AA98F /* MainCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 023FB8A42CD972EA002AA98F /* MainCellViewModel.swift */; };
 		0272D4822CD98F22003C645C /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0272D4812CD98F22003C645C /* DetailViewModel.swift */; };
 		0272D4852CD99016003C645C /* DetailCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0272D4842CD99016003C645C /* DetailCellViewModel.swift */; };
@@ -32,6 +33,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0217B7712CDC201500871DA0 /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
 		023FB8A42CD972EA002AA98F /* MainCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCellViewModel.swift; sourceTree = "<group>"; };
 		0272D4812CD98F22003C645C /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
 		0272D4842CD99016003C645C /* DetailCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailCellViewModel.swift; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				02B624AB2CCE859000704E80 /* NetworkManager.swift */,
+				0217B7712CDC201500871DA0 /* DateFormatter.swift */,
 				0272D48F2CD9A2A2003C645C /* CoreData */,
 			);
 			path = Services;
@@ -305,6 +308,7 @@
 				02B624BB2CD4D83000704E80 /* DetailViewController.swift in Sources */,
 				02B624AC2CCE859000704E80 /* NetworkManager.swift in Sources */,
 				02B624BD2CD4DB2100704E80 /* CustomTransitionAnimator.swift in Sources */,
+				0217B7722CDC201600871DA0 /* DateFormatter.swift in Sources */,
 				0272D48A2CD99C2D003C645C /* CoreDataHelper.swift in Sources */,
 				02B6249B2CCD3A0D00704E80 /* MainViewController.swift in Sources */,
 				0272D4852CD99016003C645C /* DetailCellViewModel.swift in Sources */,

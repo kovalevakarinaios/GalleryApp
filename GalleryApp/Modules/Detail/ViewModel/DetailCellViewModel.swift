@@ -9,7 +9,7 @@ import Foundation
 import SDWebImage
 
 class DetailCellViewModel {
-    
+    // Удалить height и width из модели
     var id: String
     var image: URL?
     var isFavourite: Bool?
@@ -17,6 +17,7 @@ class DetailCellViewModel {
     var createdDate: String
     var width: Int
     var height: Int
+    var aspectRatio: CGFloat
 
     init(item: PhotoItem) {
         self.id = item.id
@@ -24,6 +25,7 @@ class DetailCellViewModel {
         self.description = item.generalDescription
         self.width = item.width
         self.height = item.height
+        self.aspectRatio = CGFloat(item.height) / CGFloat(item.width)
         self.image = self.makeImageURL(stringURL: item.urls.regular)
         self.isFavourite = self.checkFavoriteStatus(id: self.id)
     }

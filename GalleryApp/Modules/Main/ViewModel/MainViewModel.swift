@@ -61,28 +61,17 @@ extension MainViewModel {
     }
     
     func prepareDetailViewModel(at indexPath: IndexPath) -> DetailViewModel {
-        let detailCellViewModels = self.dataSource.map { DetailCellViewModel(item: $0) }
+        let detailCellViewModels = self.dataSource.map { item in
+            var detailCellViewModel = DetailCellViewModel(item: item)
+            if let date = fromStringToDateFormatter.date(from: detailCellViewModel.createdDate) {
+                detailCellViewModel.createdDate = fromDateToStringFormatter.string(from: date)
+            }
+            return detailCellViewModel
+        }
         return DetailViewModel(currentPage: currentPage,
                                indexPath: indexPath,
                                detailCellViewModels: detailCellViewModels)
     }
-    
-    // нужно ли
-    func getUrl(photoType: PhotoType, for indexPath: IndexPath) -> URL? {
-        switch photoType {
-        case .regular:
-            guard let url = URL(string: self.dataSource[indexPath.row].urls.regular) else {
-                return nil
-            }
-            return url
-        case .thumb:
-            guard let url = URL(string: self.dataSource[indexPath.row].urls.thumb) else {
-                return nil
-            }
-            return url
-        }
-    }
-
     // нужно ли
     func getRatio(for indexPath: IndexPath) -> CGFloat {
         CGFloat(self.dataSource[indexPath.row].height) / CGFloat(self.dataSource[indexPath.row].width)
