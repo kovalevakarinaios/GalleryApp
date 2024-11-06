@@ -160,11 +160,10 @@ extension DetailViewController: RequestDelegate {
                 self.collectionView.reloadData()
                 self.collectionView.scrollToItem(at: self.viewModel.getCurrentItemIndexPath(),
                                                  at: .centeredHorizontally, animated: true)
-            case .error:
-                // showAlertController
-                print("showAlertController")
             case .idle:
                 break
+            case .noInternetConnection, .missingPermissions, .invalidAccessToken, .serverError, .notSpecificError:
+                print("showAlert")
             }
         }
     }

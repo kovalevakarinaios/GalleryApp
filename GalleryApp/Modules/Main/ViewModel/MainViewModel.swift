@@ -20,8 +20,13 @@ enum PhotoType {
 enum ViewState {
     case isLoading
     case success
-    case error
     case idle
+    // Error States
+    case noInternetConnection
+    case missingPermissions
+    case invalidAccessToken
+    case serverError
+    case notSpecificError
 }
 
 class MainViewModel {
@@ -96,11 +101,26 @@ extension MainViewModel {
                 self.dataSource.append(contentsOf: success)
                 self.mainViewModelCells.append(contentsOf: success.map { MainCellViewModel(item: $0) })
                 self.viewState = .success
-            case .failure(let failure as NetworkError):
-                print(failure.description)
-                self.viewState = .error
-            case .failure(_):
-                self.viewState = .error
+            case .failure(let error):
+                if let networkError = error as? NetworkError.ResponseError {
+                    switch networkError {
+                    case .missingPermissions:
+                        self.viewState = .missingPermissions
+                    case .invalidAccessToken:
+                        self.viewState = .invalidAccessToken
+                    case .serverError, .notFound:
+                        self.viewState = .serverError
+                    case .urlRequestFailed, .unknownResponseError:
+                        self.viewState = .notSpecificError
+                    }
+                } else {
+                    self.viewState = .notSpecificError
+                }
+                
+                guard let error = error as? NetworkError else {
+                    return print(error.localizedDescription)
+                }
+                print(error.description)
             }
         }
     }

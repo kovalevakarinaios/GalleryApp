@@ -53,6 +53,17 @@ class MainViewController: UIViewController {
             self.collectionView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor)
         ])
     }
+    
+    private func showAlertController(title: String, message: String) {
+        let alertController = UIAlertController(title: title,
+                                                message: message,
+                                                preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "Repeat Again",
+                                                style: .default))
+        alertController.addAction(UIAlertAction(title: "Cancel",
+                                                style: .cancel))
+        self.present(alertController, animated: true)
+    }
 }
 // Вынести в CellViewModel
 extension MainViewController: GalleryLayoutDelegate {
@@ -111,11 +122,25 @@ extension MainViewController: RequestDelegate {
             case .success:
                 print("Success")
                 self.collectionView.reloadData()
-            case .error:
-                // showAlertController
-                print("showAlertController")
             case .idle:
                 break
+            case .noInternetConnection:
+                self.showAlertController(title: "Ошибка интернет-соединения",
+                                         message: "Нет интернет-соединения. Проверьте ваше подключение и попробуйте еще раз.")
+            case .missingPermissions:
+                self.showAlertController(title: "Недостаточно прав для доступа к контенту",
+                                         message: """
+На данный момент у вас недостаточно прав для доступа к контенту.Пожалуйста, обратитесь к администратору
+""")
+            case .invalidAccessToken:
+                self.showAlertController(title: "Ошибка авторизации",
+                                         message: "Пожалуйста, обновите токен и попробуйте снова.")
+            case .serverError:
+                self.showAlertController(title: "Ошибка сервера",
+                                         message: "Сервер не отвечает. Пожалуйста, попробуйте позже.")
+            case .notSpecificError:
+                self.showAlertController(title: "Что-то пошло не так",
+                                         message: "Что-то пошло не так. Пожалуйста, попробуйте снова.")
             }
         }
     }

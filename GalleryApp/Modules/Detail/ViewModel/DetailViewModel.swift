@@ -65,7 +65,8 @@ extension DetailViewModel {
                 self.detailCellViewModels.append(contentsOf: success.map { DetailCellViewModel(item: $0) })
                 self.viewState = .success
             case .failure(let failure):
-                self.viewState = .error
+//                self.viewState = .error
+                print(failure)
             }
         }
     }
