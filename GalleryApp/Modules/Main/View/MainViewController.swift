@@ -12,7 +12,7 @@ class MainViewController: UIViewController {
     private let customNavigationDelegate = CustomNavigationControllerDelegate()
     // Think about refactoring (D)
     private let viewModel = MainViewModel()
-    
+
     private lazy var collectionView: UICollectionView = {
         let layout = GalleryLayout()
         layout.delegate = self
@@ -28,14 +28,16 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .systemBackground
+        self.setupNavigationBar()
         self.setupCollectionView()
         self.setupDelegates()
         self.viewModel.loadPhotos()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isHidden = true
+    private func setupNavigationBar() {
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh,
+                                                                 target: self,
+                                                                 action: #selector(self.updateData))
     }
 
     private func setupDelegates() {
@@ -53,32 +55,36 @@ class MainViewController: UIViewController {
             self.collectionView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor)
         ])
     }
-    
+
     private func showAlertController(title: String, message: String) {
+        
+        self.navigationItem.rightBarButtonItem?.isEnabled = true
+        
         let alertController = UIAlertController(title: title,
                                                 message: message,
                                                 preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "Repeat Again",
-                                                style: .default))
+                                                style: .default) { _ in
+            self.viewModel.loadPhotos()
+        })
         alertController.addAction(UIAlertAction(title: "Cancel",
                                                 style: .cancel) { _ in
             self.collectionView.reloadData()
         })
         self.present(alertController, animated: true)
     }
+    
+    @objc 
+    func updateData() {
+        self.viewModel.performFullRefresh()
+        self.collectionView.setContentOffset(.zero, animated: true)
+    }
 }
+
 // Вынести в CellViewModel
 extension MainViewController: GalleryLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, ratioForPhotoAtIndexPath indexPath: IndexPath) -> CGFloat {
         self.viewModel.getRatio(for: indexPath)
-    }
-}
-
-extension MainViewController: UIScrollViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentOffset.y > (scrollView.contentSize.height - scrollView.bounds.height * 1.2) {
-            self.viewModel.loadPhotos()
-        }
     }
 }
 
@@ -97,7 +103,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         cell.configureCell(with: self.viewModel.getMainCellViewModel(at: indexPath))
         return cell
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let detailViewController = DetailViewController(viewModel: self.viewModel.prepareDetailViewModel(at: indexPath))
         if let cell = collectionView.cellForItem(at: indexPath) {
@@ -111,6 +117,15 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
         }
         self.navigationController?.pushViewController(detailViewController, animated: true)
     }
+
+    // Load data when we have almost reached the end of CV in Online Mode
+    func collectionView(_ collectionView: UICollectionView,
+                        willDisplay cell: UICollectionViewCell,
+                        forItemAt indexPath: IndexPath) {
+        if indexPath.row == self.viewModel.numberOfItems - 4 && !self.viewModel.checkOfflineStatus() {
+            self.viewModel.loadPhotos()
+        }
+    }
 }
 
 // MARK: RequestDelegate - ViewModel
@@ -119,30 +134,34 @@ extension MainViewController: RequestDelegate {
         DispatchQueue.main.async {
             switch state {
             case .isLoading:
-                // showLoadingIndicator
-                print("showLoadingIndicatorOnMainScreenInsteadOfCollectionView")
+                print("View is loading")
+                self.navigationItem.rightBarButtonItem?.isEnabled = false
             case .success:
-                print("Success")
                 self.collectionView.reloadData()
+                self.navigationItem.rightBarButtonItem?.isEnabled = true
             case .idle:
                 break
             case .noInternetConnection:
-                self.showAlertController(title: "Ошибка интернет-соединения",
-                                         message: "Нет интернет-соединения. Проверьте ваше подключение и попробуйте еще раз.")
-            case .missingPermissions:
-                self.showAlertController(title: "Недостаточно прав для доступа к контенту",
+                self.showAlertController(title: "No Internet Connection",
                                          message: """
-На данный момент у вас недостаточно прав для доступа к контенту.Пожалуйста, обратитесь к администратору
-""")
+                                         There is no internet connection.
+                                         Please check your connection and try again.
+                                         """)
+            case .missingPermissions:
+                self.showAlertController(title: "Insufficient Permissions to Access Content",
+                                         message: """
+                                         At the moment, you do not have sufficient permissions to access this content. 
+                                         Please contact your administrator.
+                                         """)
             case .invalidAccessToken:
-                self.showAlertController(title: "Ошибка авторизации",
-                                         message: "Пожалуйста, обновите токен и попробуйте снова.")
+                self.showAlertController(title: "Authorization Error",
+                                         message: "Please refresh your token and try again.")
             case .serverError:
-                self.showAlertController(title: "Ошибка сервера",
-                                         message: "Сервер не отвечает. Пожалуйста, попробуйте позже.")
+                self.showAlertController(title: "Server Error",
+                                         message: "The server is not responding. Please try again later.")
             case .notSpecificError:
-                self.showAlertController(title: "Что-то пошло не так",
-                                         message: "Что-то пошло не так. Пожалуйста, попробуйте снова.")
+                self.showAlertController(title: "Something Went Wrong",
+                                         message: "Something went wrong. Please try again.")
             }
         }
     }

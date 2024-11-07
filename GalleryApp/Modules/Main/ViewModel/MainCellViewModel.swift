@@ -30,7 +30,6 @@ class MainCellViewModel {
     }
     
     func checkFavoriteStatus(id: String) -> Bool {
-        print("MainCellViewModel: checkFavouritestatus")
         return CoreDataHelper.isFavourite(id: id)
     }
 }

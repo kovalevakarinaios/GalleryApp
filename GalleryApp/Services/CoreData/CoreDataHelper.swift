@@ -78,14 +78,8 @@ class CoreDataHelper {
         
         let fetchRequest: NSFetchRequest<FavouritePhoto> = FavouritePhoto.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", id)
-        print("CoreData - Check favourite status")
         do {
             let count = try context.count(for: fetchRequest)
-            if count > 0 {
-                print("Photo ID: \(id) is favourite")
-            } else {
-                print("Photo ID: \(id) isn't favourite")
-            }
             return count > 0
         } catch {
             print("Failed to detect favourite photo")

@@ -12,11 +12,6 @@ protocol RequestDelegate: AnyObject {
     func didUpdate(with state: ViewState)
 }
 
-enum PhotoType {
-    case regular
-    case thumb
-}
-
 enum ViewState {
     case isLoading
     case success
@@ -33,6 +28,7 @@ class MainViewModel {
     
     // Request data page-by-page (30 photos on each page)
     private var currentPage = 1
+    private var isOfflineMode: Bool = false
     weak var delegate: RequestDelegate?
     
     private var viewState: ViewState {
@@ -76,11 +72,25 @@ extension MainViewModel {
     func getRatio(for indexPath: IndexPath) -> CGFloat {
         CGFloat(self.dataSource[indexPath.row].height) / CGFloat(self.dataSource[indexPath.row].width)
     }
+    
+    func checkOfflineStatus() -> Bool {
+        isOfflineMode
+    }
 }
 // MARK: Setup Data Loading
 extension MainViewModel {
+
+    func performFullRefresh() {
+        self.currentPage = 1
+        self.dataSource.removeAll()
+        self.mainViewModelCells.removeAll()
+        self.loadPhotos()
+    }
+    
     func loadPhotos() {
+        print("Вызов loadPhotos()")
         guard viewState != .isLoading else { return }
+        print("Проход до дальнейших шагов")
         self.viewState = .isLoading
         NetworkManager.shared.getPhotos(currentPage: self.currentPage) { result in
             switch result {
@@ -91,7 +101,6 @@ extension MainViewModel {
                     switch networkError {
                     case .missingPermissions:
                         self.viewState = .missingPermissions
-                        
                     case .invalidAccessToken:
                         self.viewState = .invalidAccessToken
                     case .serverError, .notFound:
@@ -100,11 +109,12 @@ extension MainViewModel {
                         self.viewState = .notSpecificError
                     }
                 } else if let error = error as? NetworkError {
-                    self.loadFavouritePhotosFromCoreData()
                     self.viewState = .noInternetConnection
                 } else {
                     self.viewState = .notSpecificError
                 }
+                
+                self.loadFavouritePhotosFromCoreData()
                 
                 guard let error = error as? NetworkError else {
                     return print(error.localizedDescription)
@@ -112,6 +122,7 @@ extension MainViewModel {
                 print(error.description)
             }
         }
+        print("Offline Mode")
     }
     
     private func handleSuccessfullLoad(photos: [PhotoItem]) {
@@ -119,6 +130,7 @@ extension MainViewModel {
         self.dataSource.append(contentsOf: photos)
         self.mainViewModelCells.append(contentsOf: photos.map { MainCellViewModel(item: $0) })
         self.viewState = .success
+        self.isOfflineMode = false
     }
     
     private func loadFavouritePhotosFromCoreData() {
@@ -127,6 +139,7 @@ extension MainViewModel {
             guard let fetchingPhotos = fetchingPhotos else { return }
             self.dataSource = fetchingPhotos.map { PhotoItem(coreDataItem: $0) }
             self.mainViewModelCells = self.dataSource.map { MainCellViewModel(item: $0) }
+            self.isOfflineMode = true
         })
     }
 }
