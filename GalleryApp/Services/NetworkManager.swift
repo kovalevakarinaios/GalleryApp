@@ -6,56 +6,7 @@
 //
 
 import Foundation
-
-// List of errors that may occur when working with the network
-enum NetworkError: Error {
-    case invalidURL
-    case urlRequestFailed
-    case noData
-    case decodingError
-    case invalidResponse
-    
-    enum ResponseError: Error {
-        case missingPermissions
-        case urlRequestFailed
-        case invalidAccessToken
-        case serverError
-        case notFound
-        case unknownResponseError(statusCode: Int)
-        
-        var description: String {
-            switch self {
-            case .missingPermissions:
-                return "Missing permissions to perform request"
-            case .urlRequestFailed:
-                return "The request was unacceptable, ex. due to missing a required parameter"
-            case .invalidAccessToken:
-                return "Invalid Access Token"
-            case .serverError:
-                return "Something went wrong on server side"
-            case .notFound:
-                return "The requested resource doesn’t exist"
-            case .unknownResponseError(let statusCode):
-                return "Other response error, statusCode - \(statusCode)"
-            }
-        }
-    }
-    
-    var description: String {
-        switch self {
-        case .invalidURL:
-            return "URL is invalid"
-        case .urlRequestFailed:
-            return "URL request is failed"
-        case .noData:
-            return "Data could not be received from the server"
-        case .decodingError:
-            return "Decoding Error"
-        case .invalidResponse:
-            return "Response is invalid"
-        }
-    }
-}
+import Network
 
 class NetworkManager {
     
@@ -94,40 +45,62 @@ class NetworkManager {
             return
         }
         
-        let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
-            }
-            
-            if let response = response as? HTTPURLResponse {
-                switch response.statusCode {
-                case 200...299:
-                    print("Response is successfull")
-                case 400:
-                    completion(.failure(NetworkError.ResponseError.urlRequestFailed))
-                case 401:
-                    completion(.failure(NetworkError.ResponseError.invalidAccessToken))
-                case 403:
-                    completion(.failure(NetworkError.ResponseError.missingPermissions))
-                case 404:
-                    completion(.failure(NetworkError.ResponseError.notFound))
-                case 500...599:
-                    completion(.failure(NetworkError.ResponseError.serverError))
-                default:
-                    completion(.failure(NetworkError.ResponseError.unknownResponseError(statusCode: response.statusCode)))
+        self.checkInternetConnection { isConnected in
+            if isConnected {
+                let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+                    if let error = error {
+                        completion(.failure(error))
+                    }
+                    
+                    if let response = response as? HTTPURLResponse {
+                        switch response.statusCode {
+                        case 200...299:
+                            print("Response is successfull")
+                        case 400:
+                            completion(.failure(NetworkError.ResponseError.urlRequestFailed))
+                        case 401:
+                            completion(.failure(NetworkError.ResponseError.invalidAccessToken))
+                        case 403:
+                            completion(.failure(NetworkError.ResponseError.missingPermissions))
+                        case 404:
+                            completion(.failure(NetworkError.ResponseError.notFound))
+                        case 500...599:
+                            completion(.failure(NetworkError.ResponseError.serverError))
+                        default:
+                            completion(.failure(NetworkError.ResponseError.unknownResponseError(statusCode: response.statusCode)))
+                        }
+                    } else {
+                        completion(.failure(NetworkError.invalidResponse))
+                    }
+                    
+                    guard let data = data else {
+                        completion(.failure(NetworkError.noData))
+                        return
+                    }
+                    
+                    completion(.success(data))
                 }
+                task.resume()
             } else {
-                completion(.failure(NetworkError.invalidResponse))
+                completion(.failure(NetworkError.noInternetConnection))
             }
-            
-            guard let data = data else {
-                completion(.failure(NetworkError.noData))
-                return
-            }
-            
-            completion(.success(data))
         }
-        task.resume()
+
+    }
+    
+    private func checkInternetConnection(completion: @escaping (Bool) -> Void) {
+        let monitor = NWPathMonitor()
+        let queue = DispatchQueue.global()
+
+        monitor.pathUpdateHandler = { path in
+            if path.status == .satisfied {
+                completion(true)
+            } else {
+                completion(false)
+            }
+            monitor.cancel()
+        }
+        monitor.start(queue: queue)
     }
     
     func getPhotos(currentPage: Int, completion: @escaping (Result<[PhotoItem], Error>) -> Void) {

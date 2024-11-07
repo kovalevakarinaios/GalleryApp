@@ -81,20 +81,17 @@ extension MainViewModel {
 extension MainViewModel {
     func loadPhotos() {
         guard viewState != .isLoading else { return }
-        
         self.viewState = .isLoading
         NetworkManager.shared.getPhotos(currentPage: self.currentPage) { result in
             switch result {
-            case .success(let success):
-                self.currentPage += 1
-                self.dataSource.append(contentsOf: success)
-                self.mainViewModelCells.append(contentsOf: success.map { MainCellViewModel(item: $0) })
-                self.viewState = .success
+            case .success(let photos):
+                self.handleSuccessfullLoad(photos: photos)
             case .failure(let error):
                 if let networkError = error as? NetworkError.ResponseError {
                     switch networkError {
                     case .missingPermissions:
                         self.viewState = .missingPermissions
+                        
                     case .invalidAccessToken:
                         self.viewState = .invalidAccessToken
                     case .serverError, .notFound:
@@ -102,6 +99,9 @@ extension MainViewModel {
                     case .urlRequestFailed, .unknownResponseError:
                         self.viewState = .notSpecificError
                     }
+                } else if let error = error as? NetworkError {
+                    self.loadFavouritePhotosFromCoreData()
+                    self.viewState = .noInternetConnection
                 } else {
                     self.viewState = .notSpecificError
                 }
@@ -112,5 +112,21 @@ extension MainViewModel {
                 print(error.description)
             }
         }
+    }
+    
+    private func handleSuccessfullLoad(photos: [PhotoItem]) {
+        self.currentPage += 1
+        self.dataSource.append(contentsOf: photos)
+        self.mainViewModelCells.append(contentsOf: photos.map { MainCellViewModel(item: $0) })
+        self.viewState = .success
+    }
+    
+    private func loadFavouritePhotosFromCoreData() {
+        CoreDataHelper.fetchData(onSuccess: { [weak self] fetchingPhotos in
+            guard let self = self else { return }
+            guard let fetchingPhotos = fetchingPhotos else { return }
+            self.dataSource = fetchingPhotos.map { PhotoItem(coreDataItem: $0) }
+            self.mainViewModelCells = self.dataSource.map { MainCellViewModel(item: $0) }
+        })
     }
 }

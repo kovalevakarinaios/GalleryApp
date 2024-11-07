@@ -64,8 +64,15 @@ class MainPhotoCell: UICollectionViewCell {
     }
     
     func configureCell(with viewModel: MainCellViewModel) {
-        let viewModel = viewModel
-        self.imageView.sd_setImage(with: viewModel.image)
+        switch viewModel.imageSource {
+        case .localData:
+            guard let data = viewModel.data else { return }
+            self.imageView.image = UIImage(data: data)
+        case .url:
+            self.imageView.sd_setImage(with: viewModel.image)
+        case .placeholder:
+            self.imageView.image = UIImage(systemName: "square.and.arrow.down")
+        }
         viewModel.checkFavoriteStatus(id: viewModel.id) ? self.setupFavouriteImageView() : nil
     }
 }

@@ -61,7 +61,9 @@ class MainViewController: UIViewController {
         alertController.addAction(UIAlertAction(title: "Repeat Again",
                                                 style: .default))
         alertController.addAction(UIAlertAction(title: "Cancel",
-                                                style: .cancel))
+                                                style: .cancel) { _ in
+            self.collectionView.reloadData()
+        })
         self.present(alertController, animated: true)
     }
 }

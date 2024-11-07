@@ -126,11 +126,18 @@ class DetailPhotoCell: UICollectionViewCell {
 
     func configureCell(with viewModel: DetailCellViewModel) {
         self.cellViewModel = viewModel
-        self.imageView.sd_setImage(with: viewModel.image)
+        switch viewModel.imageSource {
+        case .localData:
+            guard let data = viewModel.regularImageData else { return }
+            self.imageView.image = UIImage(data: data)
+        case .url:
+            self.imageView.sd_setImage(with: viewModel.image)
+        case .placeholder:
+            self.imageView.image = UIImage(systemName: "square.and.arrow.down")
+        }
         self.descriptionLabel.text = viewModel.description
         self.creationDateLabel.text = "Created " + viewModel.createdDate
-        self.addToFavoriteButton.isSelected = viewModel.isFavourite ?? false
-  
+        self.addToFavoriteButton.isSelected = viewModel.isFavourite ?? false  
         self.updateImageConstraints(withAspectRatio: viewModel.aspectRatio)
     }
     

@@ -7,6 +7,12 @@
 
 import Foundation
 
+enum ImageSource {
+    case localData
+    case url
+    case placeholder
+}
+
 struct PhotoItem: Codable, Hashable {
     let id: String
     let likes: Int
@@ -14,12 +20,39 @@ struct PhotoItem: Codable, Hashable {
     let height: Int
     let createdAt: String
     let generalDescription: String
-    let urls: PhotoURLs
+    // Image from Internet
+    let urls: PhotoURLs?
+    // Image from CoreData
+    var regularPhoto: Data?
+    var thumbPhoto: Data?
+    
+    var imageSource: ImageSource {
+        if let data = regularPhoto ?? thumbPhoto {
+            return .localData
+        } else if let url = urls?.regular, let url = urls?.thumb {
+            return .url
+        } else {
+            return .placeholder
+        }
+    }
     
     enum CodingKeys: String, CodingKey {
-        case id, likes, urls, height, width
+        case id, likes, urls, height, width, regularPhoto,thumbPhoto
         case createdAt = "created_at"
         case generalDescription = "alt_description"
+    }
+    
+    init(coreDataItem: FavouritePhoto) {
+        self.id = coreDataItem.unwrappedId
+        self.likes = Int(coreDataItem.likes)
+        self.width = Int(coreDataItem.width)
+        self.height = Int(coreDataItem.height)
+        
+        self.createdAt = coreDataItem.unwrappedCreatedAt
+        self.generalDescription = coreDataItem.unwrappedGeneralDescription
+        self.regularPhoto = coreDataItem.unwrappedRegularPhoto
+        self.thumbPhoto = coreDataItem.unwrappedThumbPhoto
+        self.urls = nil
     }
 }
 

@@ -15,16 +15,22 @@ class CoreDataHelper {
     let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
     
     // Add one entity to database
-    private static func createEntity(id: String, image: Data) {
+    private static func createEntity(photoItem: PhotoItem) {
         guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
             return
         }
         let newPhoto = FavouritePhoto(context: context)
-        newPhoto.id = id
-        newPhoto.image = image
+        newPhoto.id = photoItem.id
+        newPhoto.createdAt = photoItem.createdAt
+        newPhoto.generalDescription = photoItem.generalDescription
+        newPhoto.height = Int16(photoItem.height)
+        newPhoto.likes = Int16(photoItem.likes)
+        newPhoto.regularData = photoItem.regularPhoto
+        newPhoto.thumbData = photoItem.thumbPhoto
+        newPhoto.width = Int16(photoItem.width)
         do {
             try context.save()
-            print("Item saved, id: \(id)")
+            print("Item saved, id: \(photoItem.id)")
         } catch {
             print("Error-saving data")
         }
@@ -87,21 +93,45 @@ class CoreDataHelper {
         }
     }
     
-    static func toogleFavorite(id: String, image: URL?) {
-        if self.isFavourite(id: id) {
-            self.deleteEntity(id: id)
+    static func toogleFavorite(photoItem: PhotoItem) {
+        var photoItem = photoItem
+        if self.isFavourite(id: photoItem.id) {
+            self.deleteEntity(id: photoItem.id)
         } else {
-            SDWebImageManager.shared.loadImage(with: image,
-                                               options: .highPriority,
-                                               progress: nil
-            ) { image, _, error, _, _, _ in
-                if let error = error {
-                    print("Failed to load image data with SDWebImage: \(error)")
-                } else {
-                    guard let pngImage = image?.pngData() else { return }
-                    self.createEntity(id: id, image: pngImage)
+            switch photoItem.imageSource {
+            case .localData:
+                self.createEntity(photoItem: photoItem)
+            case .url:
+                guard let regularURL = photoItem.urls?.regular else { return }
+                guard let thumbURL = photoItem.urls?.thumb else { return }
+                SDWebImageManager.shared.loadImage(with: URL(string: regularURL),
+                                                   options: .highPriority,
+                                                   progress: nil
+                ) { image, _, error, _, _, _ in
+                    if let error = error {
+                        print("Failed to load image data with SDWebImage: \(error)")
+                    } else {
+                        guard let pngImage = image?.pngData() else { return }
+                        photoItem.regularPhoto = pngImage
+                    }
                 }
+                SDWebImageManager.shared.loadImage(with: URL(string: thumbURL),
+                                                   options: .highPriority,
+                                                   progress: nil
+                ) { image, _, error, _, _, _ in
+                    if let error = error {
+                        print("Failed to load image data with SDWebImage: \(error)")
+                    } else {
+                        guard let pngImage = image?.pngData() else { return }
+                        photoItem.thumbPhoto = pngImage
+                      
+                    }
+                }
+                self.createEntity(photoItem: photoItem)
+            case .placeholder:
+                print("CoreData placeholder")
             }
+           
         }
     }
 }

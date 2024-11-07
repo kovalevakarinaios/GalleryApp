@@ -9,6 +9,8 @@ import Foundation
 import SDWebImage
 
 class DetailCellViewModel {
+    
+    var photoItem: PhotoItem
     // Удалить height и width из модели
     var id: String
     var image: URL?
@@ -18,20 +20,26 @@ class DetailCellViewModel {
     var width: Int
     var height: Int
     var aspectRatio: CGFloat
+    var regularImageData: Data?
+    var imageSource: ImageSource
 
     init(item: PhotoItem) {
+        self.photoItem = item
         self.id = item.id
         self.createdDate = item.createdAt
         self.description = item.generalDescription
         self.width = item.width
         self.height = item.height
+        self.imageSource = item.imageSource
+        self.regularImageData = item.regularPhoto
         self.aspectRatio = CGFloat(item.height) / CGFloat(item.width)
-        self.image = self.makeImageURL(stringURL: item.urls.regular)
+        self.image = self.makeImageURL(stringURL: item.urls?.regular)
         self.isFavourite = self.checkFavoriteStatus(id: self.id)
     }
     
-    private func makeImageURL(stringURL: String) -> URL? {
-        URL(string: stringURL)
+    private func makeImageURL(stringURL: String?) -> URL? {
+        guard let stringURL = stringURL else { return nil }
+        return URL(string: stringURL)
     }
     
     private func checkFavoriteStatus(id: String) -> Bool {
@@ -41,6 +49,6 @@ class DetailCellViewModel {
     
     func toogleFavourite() {
         isFavourite?.toggle()
-        CoreDataHelper.toogleFavorite(id: id, image: image)
+        CoreDataHelper.toogleFavorite(photoItem: photoItem)
     }
 }
