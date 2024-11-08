@@ -8,23 +8,32 @@ telegram: *@karina_kovaleva_ios*
 
 # Description
 
-An image gallery
+An image gallery app displays photos loaded from an API. 
 
-<div style="display: flex; gap: 10px; justify-content: center;">
-  <div style="border: 2px solid #ccc; padding: 10px; border-radius: 8px; display: inline-block;">
-    <img src="https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/DetailGalleryScreen%20-%20with%20like.png" alt="Image 1" style="width: 200px; height: auto;">
-  </div>
-  <div style="border: 2px solid #ccc; padding: 10px; border-radius: 8px; display: inline-block;">
-    <img src="https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/DetailGalleryScreen%20-%20with%20like.png" alt="Image 2" style="width: 200px; height: auto;">
-  </div>
-</div>
-![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/DetailGalleryScreen%20-%20with%20like.png)
-![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/DetailGalleryScreen%20-%20without%20like.png)
-![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/MainGalleryScreen%20-%20alert.png)
-![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/MainGalleryScreen%20-%20landscape.png)
-![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/MainGalleryScreen%20-%20offline%20mode.png)
-![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/MainGalleryScreen%20-%20portrait.png)
-![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/MainGalleryScreen%20-%20with%20like.png)
+
+## Main Screen
+
+The main screen Pinterest-style layout dynamically adjusts when the orientation changes.
+ 
+<img src="MainGalleryScreen%20-%20portrait" width="200"> <img src="MainGalleryScreen%20-%20landscape.png" width="500">
+
+If the user likes a photo on the detail screen, the main screen will reflect this change by showing a heart icon in the bottom-right corner of the photo. This gives users a quick visual cue of their liked photos directly from the main screen.
+
+<img src="MainGalleryScreen%20-%20with%20like.png" width="200">
+
+When there is no internet connection, authentication issues, server errors, or other problems, the user will see an alert with relevant information. The app provides informative messages that explain the specific cause of each error, enhancing the user experience by offering clear guidance in case of any issues.
+
+<img src="MainGalleryScreen%20-%20alert.png" width="200"> 
+
+The app also supports offline mode: information about favorite photos, along with the photos themselves, is saved to a local database using Core Data. This allows users to continue viewing their favorite photos even when there is no internet connection.
+
+<img src="MainGalleryScreen%20-%20offline%20mode.png" width="200">
+
+## Detail Screen
+
+The detail screen provides more information about each photo, displaying it in a larger size and higher quality. Users can add photos to their favorites directly from this screen and easily navigate between available photos.
+
+<img src="DetailGalleryScreen%20-%20with%20like.png" width="200"> <img src="DetailGalleryScreen%20-%20without%20like" width="200">
 
 
 # Technologies
@@ -40,7 +49,7 @@ Database: Core Data
 Networking: URLSession
 
 Features:
-+ Custom UI Components: UICollectionView with Custom CollectionView Layout (Main Screen) and CompositionalLayout (Detail Screen)
++ Custom UI Components: UICollectionView with Custom CollectionViewLayout (Main Screen) and CompositionalLayout (Detail Screen)
 + Offline Support: Core Data
 + Error Handling & Alerts: UIAlertController
 + Custom Animations: Custom Navigation Transition (CustomTransitionAnimator, CustomNavigationControllerDelegate)
@@ -74,6 +83,9 @@ The following material was particularly useful:
 **A refresh button** was added to the navigation bar on Main Screen. This button allows users to reload the content if the internet connection is lost or if they want to update the data manually.
 
 **Different error alerts** have been implemented to inform the user when something goes wrong (for example server errors, authentication errors, lost internet connection and more). These alerts help to improve the user experience by clearly informing the user about the issue. This way, the user knows what happened and can take the necessary steps to resolve the problem.
+
+
+***Offline mode*** is supported through data saving with ***Core Data***, allowing the app to access stored information when network access is unavailable.
 
 # Requirements for the Project
 
