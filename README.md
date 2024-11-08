@@ -10,7 +10,14 @@ telegram: *@karina_kovaleva_ios*
 
 An image gallery
 
-<img src="https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/DetailGalleryScreen%20-%20with%20like.png" alt="Alt text" width="400" height="auto">
+<div style="display: flex; gap: 10px; justify-content: center;">
+  <div style="border: 2px solid #ccc; padding: 10px; border-radius: 8px; display: inline-block;">
+    <img src="https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/DetailGalleryScreen%20-%20with%20like.png" alt="Image 1" style="width: 200px; height: auto;">
+  </div>
+  <div style="border: 2px solid #ccc; padding: 10px; border-radius: 8px; display: inline-block;">
+    <img src="https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/DetailGalleryScreen%20-%20with%20like.png" alt="Image 2" style="width: 200px; height: auto;">
+  </div>
+</div>
 ![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/DetailGalleryScreen%20-%20with%20like.png)
 ![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/DetailGalleryScreen%20-%20without%20like.png)
 ![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/MainGalleryScreen%20-%20alert.png)
