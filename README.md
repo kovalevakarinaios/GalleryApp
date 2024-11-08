@@ -10,6 +10,7 @@ telegram: *@karina_kovaleva_ios*
 
 An image gallery
 
+<img src="https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/DetailGalleryScreen%20-%20with%20like.png" alt="Alt text" width="400" height="auto">
 ![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/DetailGalleryScreen%20-%20with%20like.png)
 ![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/DetailGalleryScreen%20-%20without%20like.png)
 ![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/MainGalleryScreen%20-%20alert.png)
