@@ -15,25 +15,25 @@ An image gallery app displays photos loaded from an API.
 
 The main screen Pinterest-style layout dynamically adjusts when the orientation changes.
  
-<img src="MainGalleryScreen%20-%20portrait" width="200"> <img src="MainGalleryScreen%20-%20landscape.png" width="500">
+<img src="DemonstrationPhoto/MainGalleryScreen%20-%20portrait" width="200"> <img src="DemonstrationPhoto/MainGalleryScreen%20-%20landscape.png" width="500">
 
 If the user likes a photo on the detail screen, the main screen will reflect this change by showing a heart icon in the bottom-right corner of the photo. This gives users a quick visual cue of their liked photos directly from the main screen.
 
-<img src="MainGalleryScreen%20-%20with%20like.png" width="200">
+<img src="DemonstrationPhoto/MainGalleryScreen%20-%20with%20like.png" width="200">
 
 When there is no internet connection, authentication issues, server errors, or other problems, the user will see an alert with relevant information. The app provides informative messages that explain the specific cause of each error, enhancing the user experience by offering clear guidance in case of any issues.
 
-<img src="MainGalleryScreen%20-%20alert.png" width="200"> 
+<img src="DemonstrationPhoto/MainGalleryScreen%20-%20alert.png" width="200"> 
 
 The app also supports offline mode: information about favorite photos, along with the photos themselves, is saved to a local database using Core Data. This allows users to continue viewing their favorite photos even when there is no internet connection.
 
-<img src="MainGalleryScreen%20-%20offline%20mode.png" width="200">
+<img src="DemonstrationPhoto/MainGalleryScreen%20-%20offline%20mode.png" width="200">
 
 ## Detail Screen
 
 The detail screen provides more information about each photo, displaying it in a larger size and higher quality. Users can add photos to their favorites directly from this screen and easily navigate between available photos.
 
-<img src="DetailGalleryScreen%20-%20with%20like.png" width="200"> <img src="DetailGalleryScreen%20-%20without%20like" width="200">
+<img src="DemonstrationPhoto/DetailGalleryScreen%20-%20with%20like.png" width="200"> <img src="DemonstrationPhoto/DetailGalleryScreen%20-%20without%20like" width="200">
 
 
 # Technologies
