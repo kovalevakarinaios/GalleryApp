@@ -10,7 +10,13 @@ telegram: *@karina_kovaleva_ios*
 
 An image gallery
 
-(https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/DetailGalleryScreen%20-%20with%20like.png)
+![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/DetailGalleryScreen%20-%20with%20like.png)
+![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/DetailGalleryScreen%20-%20without%20like.png)
+![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/MainGalleryScreen%20-%20alert.png)
+![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/MainGalleryScreen%20-%20landscape.png)
+![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/MainGalleryScreen%20-%20offline%20mode.png)
+![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/MainGalleryScreen%20-%20portrait.png)
+![Alt text](https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/MainGalleryScreen%20-%20with%20like.png)
 
 
 # Technologies
@@ -26,7 +32,7 @@ Database: Core Data
 Networking: URLSession
 
 Features:
-+ Custom UI Components: UICollectionView with Custom CollectionView Layout
++ Custom UI Components: UICollectionView with Custom CollectionView Layout (Main Screen) and CompositionalLayout (Detail Screen)
 + Offline Support: Core Data
 + Error Handling & Alerts: UIAlertController
 + Custom Animations: Custom Navigation Transition (CustomTransitionAnimator, CustomNavigationControllerDelegate)
