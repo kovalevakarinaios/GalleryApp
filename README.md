@@ -8,7 +8,7 @@ telegram: *@karina_kovaleva_ios*
 
 # Description
 
-An image gallery app displays photos loaded from an API. 
+This is an image gallery app that displays photos loaded from an Unsplash API in a collection view. The app allows users to view detailed information about each photo on a separate detail screen. Users can also add photos to their favorites, with the ability to access these favorite photos even when offline.
 
 
 ## Main Screen
