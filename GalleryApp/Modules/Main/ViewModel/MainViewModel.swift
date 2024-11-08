@@ -85,7 +85,16 @@ extension MainViewModel: MainViewModelProtocol {
     }
  
     func getRatio(for indexPath: IndexPath) -> CGFloat {
-        CGFloat(self.dataSource[indexPath.row].height) / CGFloat(self.dataSource[indexPath.row].width)
+        if self.dataSource[indexPath.row].width > 0 && self.dataSource[indexPath.row].height > 0 {
+            return CGFloat(self.dataSource[indexPath.row].height) / CGFloat(self.dataSource[indexPath.row].width)
+        } else {
+            print("""
+                  Invalid dimensions for photo at index \(indexPath): 
+                  height = \(self.dataSource[indexPath.row].height),
+                  width = \(self.dataSource[indexPath.row].width)
+                  """)
+            return 1.0
+        }
     }
     
     func checkOfflineStatus() -> Bool {
