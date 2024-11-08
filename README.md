@@ -15,7 +15,7 @@ An image gallery app displays photos loaded from an API.
 
 The main screen Pinterest-style layout dynamically adjusts when the orientation changes.
  
-<img src="DemonstrationPhoto/MainGalleryScreen%20-%20portrait" width="200"> <img src="DemonstrationPhoto/MainGalleryScreen%20-%20landscape.png" width="500">
+<img src="DemonstrationPhoto/MainGalleryScreen%20-%20portrait.png" width="200"> <img src="DemonstrationPhoto/MainGalleryScreen%20-%20landscape.png" width="500">
 
 If the user likes a photo on the detail screen, the main screen will reflect this change by showing a heart icon in the bottom-right corner of the photo. This gives users a quick visual cue of their liked photos directly from the main screen.
 
@@ -33,7 +33,7 @@ The app also supports offline mode: information about favorite photos, along wit
 
 The detail screen provides more information about each photo, displaying it in a larger size and higher quality. Users can add photos to their favorites directly from this screen and easily navigate between available photos.
 
-<img src="DemonstrationPhoto/DetailGalleryScreen%20-%20with%20like.png" width="200"> <img src="DemonstrationPhoto/DetailGalleryScreen%20-%20without%20like" width="200">
+<img src="DemonstrationPhoto/DetailGalleryScreen%20-%20with%20like.png" width="200"> <img src="DemonstrationPhoto/DetailGalleryScreen%20-%20without%20like.png" width="200">
 
 
 # Technologies
