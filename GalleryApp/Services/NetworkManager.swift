@@ -67,6 +67,7 @@ class NetworkManager {
                         case 500...599:
                             completion(.failure(NetworkError.ResponseError.serverError))
                         default:
+                            // swiftlint:disable:next line_length
                             completion(.failure(NetworkError.ResponseError.unknownResponseError(statusCode: response.statusCode)))
                         }
                     } else {
@@ -85,7 +86,6 @@ class NetworkManager {
                 completion(.failure(NetworkError.noInternetConnection))
             }
         }
-
     }
     
     private func checkInternetConnection(completion: @escaping (Bool) -> Void) {

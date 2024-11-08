@@ -26,12 +26,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to select a configuration to create the new scene with.
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
-    
-    lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "FavouritePhotoModel")
-        container.loadPersistentStores { _, _ in
-            
-        }
-        return container
-    }()
 }

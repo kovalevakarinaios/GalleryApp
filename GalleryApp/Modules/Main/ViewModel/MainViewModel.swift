@@ -8,10 +8,6 @@
 import Foundation
 import UIKit
 
-protocol RequestDelegate: AnyObject {
-    func didUpdate(with state: ViewState)
-}
-
 enum ViewState {
     case isLoading
     case success
@@ -22,6 +18,21 @@ enum ViewState {
     case invalidAccessToken
     case serverError
     case notSpecificError
+}
+
+protocol RequestDelegate: AnyObject {
+    func didUpdate(with state: ViewState)
+}
+
+protocol MainViewModelProtocol {
+    var delegate: RequestDelegate? { get set }
+    var numberOfItems: Int { get }
+    func loadPhotos()
+    func performFullRefresh()
+    func getRatio(for indexPath: IndexPath) -> CGFloat
+    func checkOfflineStatus() -> Bool
+    func prepareDetailViewModel(at indexPath: IndexPath) -> DetailViewModel
+    func getMainCellViewModel(at indexPath: IndexPath) -> MainCellViewModel?
 }
 
 class MainViewModel {
@@ -47,28 +58,32 @@ class MainViewModel {
 }
 
 // MARK: DataSource
-extension MainViewModel {
+extension MainViewModel: MainViewModelProtocol {
+    
     var numberOfItems: Int {
         self.mainViewModelCells.count
     }
     
-    func getMainCellViewModel(at indexPath: IndexPath) -> MainCellViewModel {
-        self.mainViewModelCells[indexPath.row]
+    func getMainCellViewModel(at indexPath: IndexPath) -> MainCellViewModel? {
+        print("\(indexPath.row) \(mainViewModelCells.count)")
+        guard indexPath.row < self.mainViewModelCells.count else {
+            return nil
+           }
+        return self.mainViewModelCells[indexPath.row]
     }
     
     func prepareDetailViewModel(at indexPath: IndexPath) -> DetailViewModel {
         let detailCellViewModels = self.dataSource.map { item in
-            var detailCellViewModel = DetailCellViewModel(item: item)
+            let detailCellViewModel = DetailCellViewModel(item: item)
             if let date = fromStringToDateFormatter.date(from: detailCellViewModel.createdDate) {
                 detailCellViewModel.createdDate = fromDateToStringFormatter.string(from: date)
             }
             return detailCellViewModel
         }
-        return DetailViewModel(currentPage: currentPage,
-                               indexPath: indexPath,
+        return DetailViewModel(indexPath: indexPath,
                                detailCellViewModels: detailCellViewModels)
     }
-    // нужно ли
+ 
     func getRatio(for indexPath: IndexPath) -> CGFloat {
         CGFloat(self.dataSource[indexPath.row].height) / CGFloat(self.dataSource[indexPath.row].width)
     }
@@ -77,6 +92,7 @@ extension MainViewModel {
         isOfflineMode
     }
 }
+
 // MARK: Setup Data Loading
 extension MainViewModel {
 
@@ -88,9 +104,7 @@ extension MainViewModel {
     }
     
     func loadPhotos() {
-        print("Вызов loadPhotos()")
         guard viewState != .isLoading else { return }
-        print("Проход до дальнейших шагов")
         self.viewState = .isLoading
         NetworkManager.shared.getPhotos(currentPage: self.currentPage) { result in
             switch result {
@@ -109,7 +123,12 @@ extension MainViewModel {
                         self.viewState = .notSpecificError
                     }
                 } else if let error = error as? NetworkError {
-                    self.viewState = .noInternetConnection
+                    switch error {
+                    case .invalidURL, .urlRequestFailed, .noData, .decodingError, .invalidResponse:
+                        self.viewState = .notSpecificError
+                    case .noInternetConnection:
+                        self.viewState = .noInternetConnection
+                    }
                 } else {
                     self.viewState = .notSpecificError
                 }
@@ -122,7 +141,6 @@ extension MainViewModel {
                 print(error.description)
             }
         }
-        print("Offline Mode")
     }
     
     private func handleSuccessfullLoad(photos: [PhotoItem]) {
@@ -134,6 +152,7 @@ extension MainViewModel {
     }
     
     private func loadFavouritePhotosFromCoreData() {
+        // swiftlint:disable:next trailing_closure
         CoreDataHelper.fetchData(onSuccess: { [weak self] fetchingPhotos in
             guard let self = self else { return }
             guard let fetchingPhotos = fetchingPhotos else { return }

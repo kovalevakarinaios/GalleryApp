@@ -10,7 +10,7 @@ import UIKit
 
 class DetailViewController: UIViewController {
     
-    private let viewModel: DetailViewModel
+    private var viewModel: DetailViewModelProtocol
     
     private lazy var collectionView: UICollectionView = {
         var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createLayout())
@@ -45,7 +45,7 @@ class DetailViewController: UIViewController {
         ])
     }
     
-    init(viewModel: DetailViewModel) {
+    init(viewModel: DetailViewModelProtocol) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -54,7 +54,7 @@ class DetailViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func getImageViewFrame() -> CGRect {
+    func getImageViewFrame(ratio: CGFloat) -> CGRect {
         self.view.layoutIfNeeded()
         guard let layoutAttributes = collectionView.layoutAttributesForItem(at: IndexPath(row: 0, section: 0)) else {
             return CGRect(x: 100, y: 100, width: 50, height: 50)
@@ -62,53 +62,17 @@ class DetailViewController: UIViewController {
         
         let cellFrameInCollectionView = layoutAttributes.frame
         let cellFrameInSuperview = collectionView.convert(cellFrameInCollectionView, to: self.view)
-        let imageViewSize = CGSize(width: cellFrameInSuperview.width,
-                                   height: cellFrameInSuperview.height * 0.65)
-        let imageViewOriginX = cellFrameInSuperview.origin.x + 16
-        let imageViewOriginY = cellFrameInSuperview.origin.y +
-        (cellFrameInSuperview.height - imageViewSize.height) / 2 + 12
+        let imageViewWidth = cellFrameInSuperview.width * 0.81
+        let imageViewHeight = imageViewWidth * ratio
+        let imageViewSize = CGSize(width: imageViewWidth,
+                                   height: imageViewHeight)
+        let imageViewOriginX = cellFrameInSuperview.origin.x + (cellFrameInSuperview.width - imageViewSize.width) / 2
+        let imageViewOriginY = cellFrameInSuperview.origin.y + (cellFrameInSuperview.height - imageViewSize.height) / 2
         
         let imageViewFrameInSuperview = CGRect(origin: CGPoint(x: imageViewOriginX, 
                                                                y: imageViewOriginY),
                                                size: imageViewSize)
-        
-        let imageInSuperview = getImageCoordinatesInSuperview(imageViewFrame: imageViewFrameInSuperview,
-                                                              imageSize: self.viewModel.getSize())
-        print("imageViewFrameInSuperview \(imageViewFrameInSuperview)")
-        return imageInSuperview
-        
-    }
-    
-    private func getImageCoordinatesInSuperview(imageViewFrame: CGRect, imageSize: CGSize) -> CGRect {
-        let imageViewWidth = imageViewFrame.size.width
-        let imageViewHeight = imageViewFrame.size.height
-        
-        let imageWidth = imageSize.width
-        let imageHeight = imageSize.height
-
-        let imageViewRatio = imageViewWidth / imageViewHeight
-        let imageRatio = imageWidth / imageHeight
-        
-        var scale: CGFloat
-        var scaledImageSize: CGSize
-        var xOffset: CGFloat = 0
-        var yOffset: CGFloat = 0
-        
-        if imageViewRatio > imageRatio {
-            scale = imageViewHeight / imageHeight
-            scaledImageSize = CGSize(width: imageWidth * scale, height: imageViewHeight)
-            xOffset = (imageViewWidth - scaledImageSize.width) / 2
-        } else {
-            scale = imageViewWidth / imageWidth
-            scaledImageSize = CGSize(width: imageViewWidth, height: imageHeight * scale)
-            yOffset = (imageViewHeight - scaledImageSize.height) / 2
-        }
-
-        let imageX = imageViewFrame.origin.x + xOffset
-        let imageY = imageViewFrame.origin.y + yOffset
-        let imageRect = CGRect(x: imageX, y: imageY, width: scaledImageSize.width, height: scaledImageSize.height)
-
-        return imageRect
+        return imageViewFrameInSuperview
     }
 }
 
@@ -152,17 +116,22 @@ extension DetailViewController: RequestDelegate {
         DispatchQueue.main.async {
             switch state {
             case .isLoading:
-                // showLoadingIndicator
-                print("showLoadingIndicatorOnDetailScreenInsteadOfCollectionView")
+                print("DetailVC is loading")
             case .success:
-                print("Success")
+                print("DetailVC loading is successfull")
                 self.collectionView.reloadData()
-                self.collectionView.scrollToItem(at: self.viewModel.getCurrentItemIndexPath(),
-                                                 at: .centeredHorizontally, animated: true)
-            case .idle:
-                break
-            case .noInternetConnection, .missingPermissions, .invalidAccessToken, .serverError, .notSpecificError:
-                print("showAlert")
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.collectionView.scrollToItem(at: self.viewModel.getCurrentItemIndexPath(),
+                                                     at: .centeredVertically,
+                                                     animated: true)
+                }
+            default:
+                let alertController = UIAlertController(title: "Something Went Wrong",
+                                                        message: "Something went wrong. Please try again.",
+                                                        preferredStyle: .alert)
+                alertController.addAction(UIAlertAction(title: "Cancel",
+                                                        style: .cancel))
+                self.present(alertController, animated: true)
             }
         }
     }

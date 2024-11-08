@@ -117,6 +117,17 @@ class DetailPhotoCell: UICollectionViewCell {
             self.addToFavoriteButton.bottomAnchor.constraint(equalTo: self.imageView.bottomAnchor, constant: -10)
         ])
     }
+    
+    private func updateImageConstraints(withAspectRatio aspectRatio: CGFloat) {
+        if let heightConstraint = imageHeightConstraint {
+            NSLayoutConstraint.deactivate([heightConstraint])
+        }
+
+        imageHeightConstraint = imageView.heightAnchor.constraint(equalTo: self.imageView.widthAnchor,
+                                                                  multiplier: aspectRatio)
+        
+        NSLayoutConstraint.activate([imageHeightConstraint])
+    }
 
     @objc 
     func tapFavouriteButton() {
@@ -139,17 +150,6 @@ class DetailPhotoCell: UICollectionViewCell {
         self.creationDateLabel.text = "Created " + viewModel.createdDate
         self.addToFavoriteButton.isSelected = viewModel.isFavourite ?? false  
         self.updateImageConstraints(withAspectRatio: viewModel.aspectRatio)
-    }
-    
-    private func updateImageConstraints(withAspectRatio aspectRatio: CGFloat) {
-        if let heightConstraint = imageHeightConstraint {
-            NSLayoutConstraint.deactivate([heightConstraint])
-        }
-
-        imageHeightConstraint = imageView.heightAnchor.constraint(equalTo: self.imageView.widthAnchor,
-                                                                  multiplier: aspectRatio)
-        
-        NSLayoutConstraint.activate([imageHeightConstraint])
     }
 
     func returnImageViewFrame() -> CGRect {

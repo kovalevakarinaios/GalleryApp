@@ -27,9 +27,9 @@ struct PhotoItem: Codable, Hashable {
     var thumbPhoto: Data?
     
     var imageSource: ImageSource {
-        if let data = regularPhoto ?? thumbPhoto {
+        if regularPhoto != nil, thumbPhoto != nil {
             return .localData
-        } else if let url = urls?.regular, let url = urls?.thumb {
+        } else if urls?.regular != nil, urls?.thumb != nil {
             return .url
         } else {
             return .placeholder

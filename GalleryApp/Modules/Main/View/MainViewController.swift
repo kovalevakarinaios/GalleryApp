@@ -10,8 +10,7 @@ import UIKit
 class MainViewController: UIViewController {
     
     private let customNavigationDelegate = CustomNavigationControllerDelegate()
-    // Think about refactoring (D)
-    private let viewModel = MainViewModel()
+    private var viewModel: MainViewModelProtocol
 
     private lazy var collectionView: UICollectionView = {
         let layout = GalleryLayout()
@@ -19,11 +18,22 @@ class MainViewController: UIViewController {
         
         let collectionView = UICollectionView(frame: self.view.bounds, collectionViewLayout: layout)
         collectionView.register(MainPhotoCell.self, forCellWithReuseIdentifier: MainPhotoCell.identifier)
+        // swiftlint:disable:next line_length
+        collectionView.register(PlaceholderCollectionViewCell.self, forCellWithReuseIdentifier: PlaceholderCollectionViewCell.identifier)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.dataSource = self
         collectionView.delegate = self
         return collectionView
     }()
+    
+    init(viewModel: MainViewModelProtocol) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,6 +42,23 @@ class MainViewController: UIViewController {
         self.setupCollectionView()
         self.setupDelegates()
         self.viewModel.loadPhotos()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.collectionView.reloadData()
+    }
+    
+    // Reset attributes cache when screen orientation changes
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        // swiftlint:disable:next trailing_closure
+        coordinator.animate(alongsideTransition: { _ in
+            if let layout = self.collectionView.collectionViewLayout as? GalleryLayout {
+                layout.removeCache()
+                layout.invalidateLayout()
+            }
+        })
     }
 
     private func setupNavigationBar() {
@@ -65,7 +92,7 @@ class MainViewController: UIViewController {
                                                 preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "Repeat Again",
                                                 style: .default) { _ in
-            self.viewModel.loadPhotos()
+            self.viewModel.performFullRefresh()
         })
         alertController.addAction(UIAlertAction(title: "Cancel",
                                                 style: .cancel) { _ in
@@ -81,7 +108,6 @@ class MainViewController: UIViewController {
     }
 }
 
-// Вынести в CellViewModel
 extension MainViewController: GalleryLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, ratioForPhotoAtIndexPath indexPath: IndexPath) -> CGFloat {
         self.viewModel.getRatio(for: indexPath)
@@ -100,7 +126,15 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
                                                             for: indexPath) as? MainPhotoCell else {
             return UICollectionViewCell()
         }
-        cell.configureCell(with: self.viewModel.getMainCellViewModel(at: indexPath))
+        guard let model = self.viewModel.getMainCellViewModel(at: indexPath) else {
+            // swiftlint:disable:next line_length
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PlaceholderCollectionViewCell.identifier,
+                                                                for: indexPath) as? PlaceholderCollectionViewCell else {
+                return UICollectionViewCell()
+            }
+            return cell
+        }
+        cell.configureCell(with: model)
         return cell
     }
 
@@ -110,10 +144,8 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
             // Convert сell frame to frame relative to superview
             let originFrame = cell.superview?.convert(cell.frame, to: nil) ?? .zero
             let snapshot = cell.snapshotView(afterScreenUpdates: true) ?? UIView()
-            
-            customNavigationDelegate.updateInfoForTransitionAnimation(cellOriginFrame: originFrame,
-                                                                      snapshot: snapshot,
-                                                                      frame: detailViewController.getImageViewFrame())
+            // swiftlint:disable:next line_length
+            customNavigationDelegate.updateInfoForTransitionAnimation(cellOriginFrame: originFrame, snapshot: snapshot, frame: detailViewController.getImageViewFrame(ratio: self.viewModel.getRatio(for: indexPath)))
         }
         self.navigationController?.pushViewController(detailViewController, animated: true)
     }
@@ -137,6 +169,7 @@ extension MainViewController: RequestDelegate {
                 print("View is loading")
                 self.navigationItem.rightBarButtonItem?.isEnabled = false
             case .success:
+                print("Reload CV")
                 self.collectionView.reloadData()
                 self.navigationItem.rightBarButtonItem?.isEnabled = true
             case .idle:

@@ -12,13 +12,22 @@ import UIKit
 
 class CoreDataHelper {
 
-    let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
-    
+    private static var persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "FavouritePhotoModel")
+
+        container.loadPersistentStores { _, error in
+            if let error {
+                fatalError("Failed to load persistent stores: \(error.localizedDescription)")
+            }
+        }
+
+        return container
+    }()
+
     // Add one entity to database
     private static func createEntity(photoItem: PhotoItem) {
-        guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
-            return
-        }
+        let context = persistentContainer.viewContext
+        
         let newPhoto = FavouritePhoto(context: context)
         newPhoto.id = photoItem.id
         newPhoto.createdAt = photoItem.createdAt
@@ -38,9 +47,7 @@ class CoreDataHelper {
     
     // Delete one entity from database
     private static func deleteEntity(id: String) {
-        guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
-            return
-        }
+        let context = persistentContainer.viewContext
         
         let fetchRequest: NSFetchRequest<FavouritePhoto> = FavouritePhoto.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", id)
@@ -59,9 +66,8 @@ class CoreDataHelper {
     
     // Fetch all entities from database
     static func fetchData(onSuccess: @escaping ([FavouritePhoto]?) -> Void) {
-        guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
-            return
-        }
+        let context = persistentContainer.viewContext
+        
         do {
             let items = try context.fetch(FavouritePhoto.fetchRequest()) as? [FavouritePhoto]
             onSuccess(items)
@@ -72,9 +78,7 @@ class CoreDataHelper {
     
     // Check photo's favourite status
     static func isFavourite(id: String) -> Bool {
-        guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else {
-            return false
-        }
+        let context = persistentContainer.viewContext
         
         let fetchRequest: NSFetchRequest<FavouritePhoto> = FavouritePhoto.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", id)

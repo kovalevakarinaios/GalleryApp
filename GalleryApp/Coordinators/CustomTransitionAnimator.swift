@@ -81,6 +81,7 @@ class CustomTransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning 
             print("Animating from \(self.selectedCellImageViewSnapshot.frame) to \(finalFrameForImage)")
             self.selectedCellImageViewSnapshot.frame = finalFrameForImage
             fadeView.alpha = self.isPush ? 1 : 0
+            // swiftlint:disable:next multiple_closures_with_trailing_closure
         }) { finished in
             // Animation is complete, user interface can be refreshed
             toView.alpha = 1

@@ -12,7 +12,8 @@ import UIKit
 
 extension FavouritePhoto {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<FavouritePhoto> {
+    @nonobjc 
+    public class func fetchRequest() -> NSFetchRequest<FavouritePhoto> {
         return NSFetchRequest<FavouritePhoto>(entityName: "FavouritePhoto")
     }
 
@@ -26,7 +27,7 @@ extension FavouritePhoto {
     @NSManaged public var thumbData: Data?
 }
 
-extension FavouritePhoto : Identifiable {
+extension FavouritePhoto: Identifiable {
 
 }
 
@@ -44,10 +45,10 @@ extension FavouritePhoto {
     }
     
     var unwrappedCreatedAt: String {
-        return createdAt ?? "Дата неизвестна"
+        return createdAt ?? "Unknown Date"
     }
     
     var unwrappedGeneralDescription: String {
-        return generalDescription ?? "Описание отсутствует"
+        return generalDescription ?? "No Description"
     }
 }

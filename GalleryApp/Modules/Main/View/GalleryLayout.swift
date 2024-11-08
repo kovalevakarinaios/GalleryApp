@@ -45,8 +45,7 @@ class GalleryLayout: UICollectionViewLayout {
     
     override func prepare() {
         guard let collectionView = collectionView else { return }
-        
-        self.cache.removeAll()
+
         self.contentHeight = 0
         
         let columnWidth = self.contentWidth / CGFloat(self.numberOfColumns)
@@ -88,23 +87,20 @@ class GalleryLayout: UICollectionViewLayout {
     
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         var visibleLayoutAttributes: [UICollectionViewLayoutAttributes] = []
-    
+        
         // Loop through the cache and look for items in the rect
-        for attributes in cache {
-            if attributes.frame.intersects(rect) {
-                visibleLayoutAttributes.append(attributes)
-            }
+        for attributes in cache where attributes.frame.intersects(rect) {
+            visibleLayoutAttributes.append(attributes)
         }
         return visibleLayoutAttributes
     }
-    
+
     // Add cached layout attributes for the item at specified indexpath
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        return self.cache[indexPath.item]
+        self.cache[indexPath.item]
     }
     
-    // Invalidates the layout if the collection view's width changes (true - width change, false - width same)
-    override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-        return newBounds.width != self.collectionView?.bounds.width
+    func removeCache() {
+        self.cache.removeAll()
     }
 }

@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class MainCellViewModel {
+class MainCellViewModel: BaseCellViewModel {
     
     var id: String
     var image: URL?
@@ -20,16 +20,8 @@ class MainCellViewModel {
         self.id = item.id
         self.data = item.thumbPhoto
         self.imageSource = item.imageSource
+        super.init()
         self.image = self.makeImageURL(stringURL: item.urls?.thumb)
         self.isFavourite = self.checkFavoriteStatus(id: self.id)
-    }
-
-    private func makeImageURL(stringURL: String?) -> URL? {
-        guard let stringURL = stringURL else { return nil }
-        return URL(string: stringURL)
-    }
-    
-    func checkFavoriteStatus(id: String) -> Bool {
-        return CoreDataHelper.isFavourite(id: id)
     }
 }
