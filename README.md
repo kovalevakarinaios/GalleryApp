@@ -3,20 +3,26 @@
 # Author
 
 Karina Kovaleva
+
 telegram: *@karina_kovaleva_ios*
 
 # Description
 
 An image gallery
 
+(https://github.com/kovalevakarinaios/GalleryApp/blob/develop/DemonstrationPhoto/DetailGalleryScreen%20-%20with%20like.png)
 
 
 # Technologies
 
 Language: Swift
+
 Architecture: MVVM
+
 Tools: Xcode
+
 Database: Core Data
+
 Networking: URLSession
 
 Features:
@@ -60,34 +66,53 @@ The following material was particularly useful:
 ## Image Gallery Screen
 
 :white_check_mark: Display a grid of thumbnail images fetched from the Unsplash API
+
 :white_check_mark: Each thumbnail should be tappable and lead to the Image Detail Screen.
+
 :white_check_mark: Implement pagination to load more images as the user scrolls to the bottom of the screen.
 
 ## Image Detail Screen
 
 :white_check_mark: Show the selected image in a larger view with additional details, such as the image title and description.
+
 :white_check_mark: Allow the user to mark the image as a favourite by tapping a heart-shaped button.
+
 :white_check_mark: Implement navigation between images in the detail view.
 
 ## Networking
 
 :white_check_mark: Use the Unsplash API (https://unsplash.com/developers) to fetch the images.
+
 :white_check_mark: Use the "List Photos" endpoint to retrieve a list of curated photos. Fetch the images in pages of **30** images per request.
+
 :white_check_mark: Implement basic data persistence to store and retrieve the user's favorite images locally - **CoreData**.
+
 :white_check_mark: Display a visual indicator on the thumbnail images in the gallery screen for the user's favorite images.
+
 :white_check_mark: Design the user interface with attention to usability and aesthetics. Ensure a clean and intuitive layout, considering different device sizes and orientations.
+
 :white_check_mark: Use appropriate UI components and image caching techniques for smooth scrolling and image loading.
 
 ## Technical Guidelines
 
 :white_check_mark: Use Swift as the programming language.
+
 :white_check_mark: Support iOS 15 and above.
+
 :white_check_mark: Use UIKit for building the user interface.
+
 :white_check_mark: Utilize URLSession for network requests.
+
 :white_check_mark: Structure the codebase with appropriate separation of concerns and modularity.
+
 :white_check_mark: Implement proper error handling and data parsing. Demonstrate proficiency in asynchronous programming. 
+
 :negative_squared_cross_mark: Basic unit tests are encouraged but not mandatory.
+
 :white_check_mark: Implement proper error handling and data parsing. Demonstrate proficiency in asynchronous programming. 
+
 :white_check_mark: Try to use SOLID principles throughout your development process.
+
 :white_check_mark: Use MV(x) pattern or any other complex Clean-architecture. NOT MVC! - **MVVM**
+
 :white_check_mark: Use swiftlint or any other linter for code formatting. - **Swiftlint**
