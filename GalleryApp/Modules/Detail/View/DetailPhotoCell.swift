@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class DetailPhotoCell: UICollectionViewCell {
+final class DetailPhotoCell: UICollectionViewCell {
     
     static let identifier = "DetailPhotoCell"
 

@@ -15,7 +15,7 @@ protocol DetailViewModelProtocol {
     func refreshData()
 }
 
-class DetailViewModel: DetailViewModelProtocol {
+final class DetailViewModel: DetailViewModelProtocol {
 
     private var indexPath: IndexPath
     private var detailCellViewModels: [DetailCellViewModel]

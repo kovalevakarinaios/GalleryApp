@@ -35,7 +35,7 @@ protocol MainViewModelProtocol {
     func getMainCellViewModel(at indexPath: IndexPath) -> MainCellViewModel?
 }
 
-class MainViewModel {
+final class MainViewModel {
     
     // Request data page-by-page (30 photos on each page)
     private var currentPage = 1

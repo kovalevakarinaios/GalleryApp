@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class MainCellViewModel: BaseCellViewModel {
+final class MainCellViewModel: BaseCellViewModel {
     
     var id: String
     var image: URL?

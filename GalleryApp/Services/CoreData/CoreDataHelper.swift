@@ -10,7 +10,7 @@ import CoreData
 import SDWebImage
 import UIKit
 
-class CoreDataHelper {
+final class CoreDataHelper {
 
     private static var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "FavouritePhotoModel")

@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class DetailViewController: UIViewController {
+final class DetailViewController: UIViewController {
     
     private var viewModel: DetailViewModelProtocol
     

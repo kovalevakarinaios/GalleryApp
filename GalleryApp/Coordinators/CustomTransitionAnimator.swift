@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 // MARK: Custom TransitionAnimator
-class CustomTransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning {
+final class CustomTransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning {
     
     private let isPush: Bool
     private let cellOriginFrame: CGRect

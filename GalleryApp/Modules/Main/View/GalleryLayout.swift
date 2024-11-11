@@ -13,7 +13,7 @@ protocol GalleryLayoutDelegate: AnyObject {
 }
 
 // MARK: Custom UICollectionViewLayout
-class GalleryLayout: UICollectionViewLayout {
+final class GalleryLayout: UICollectionViewLayout {
     
     private let cellPadding: CGFloat = 6
     

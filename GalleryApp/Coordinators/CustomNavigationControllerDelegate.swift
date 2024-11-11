@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 // MARK: Custom NavigationControllerDelegate
-class CustomNavigationControllerDelegate: NSObject, UINavigationControllerDelegate {
+final class CustomNavigationControllerDelegate: NSObject, UINavigationControllerDelegate {
     
     private var cellOriginFrame: CGRect = .zero
     private var snapshot: UIView = UIView()

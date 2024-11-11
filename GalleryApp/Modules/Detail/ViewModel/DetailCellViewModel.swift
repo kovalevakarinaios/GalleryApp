@@ -8,7 +8,7 @@
 import Foundation
 import SDWebImage
 
-class DetailCellViewModel: BaseCellViewModel {
+final class DetailCellViewModel: BaseCellViewModel {
     
     var photoItem: PhotoItem
     var id: String

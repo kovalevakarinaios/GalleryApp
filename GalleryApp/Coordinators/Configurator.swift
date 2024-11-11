@@ -11,7 +11,7 @@ protocol ConfiguratorProtocol {
     static func createMainModule() -> UIViewController
 }
 
-class Configurator: ConfiguratorProtocol {
+final class Configurator: ConfiguratorProtocol {
     
     static func createMainModule() -> UIViewController {
         let networkManager = NetworkManager()

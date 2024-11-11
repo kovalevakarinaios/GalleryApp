@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainViewController: UIViewController {
+final class MainViewController: UIViewController {
     
     private let customNavigationDelegate = CustomNavigationControllerDelegate()
     private var viewModel: MainViewModelProtocol

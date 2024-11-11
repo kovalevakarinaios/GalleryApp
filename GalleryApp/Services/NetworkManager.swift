@@ -12,7 +12,7 @@ protocol NetworkManagerProtocol {
     func getPhotos(currentPage: Int, completion: @escaping (Result<[PhotoItem], Error>) -> Void)
 }
 
-class NetworkManager: NetworkManagerProtocol {
+final class NetworkManager: NetworkManagerProtocol {
 
     private func createURL(currentPage: Int) -> URL? {
         var components = URLComponents()

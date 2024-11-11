@@ -10,7 +10,7 @@ import UIKit
 
 // swiftlint:disable:next line_length
 // Placeholder is needed to insert it into cells that cannot be processed (for example, if we lost internet in process of fast scrolling)
-class PlaceholderCollectionViewCell: UICollectionViewCell {
+final class PlaceholderCollectionViewCell: UICollectionViewCell {
     
     static let identifier = "PlaceholderCollectionViewCell"
     
