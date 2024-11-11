@@ -31,7 +31,7 @@ final class CustomNavigationControllerDelegate: NSObject, UINavigationController
                                             cellOriginFrame: self.cellOriginFrame,
                                             selectedCellImageViewSnapshot: self.snapshot, 
                                             detailImageViewFrame: self.detailImageViewFrame)
-        default:
+        case .none:
             return nil
         }
     }

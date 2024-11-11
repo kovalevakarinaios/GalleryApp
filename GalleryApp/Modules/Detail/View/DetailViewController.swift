@@ -124,7 +124,8 @@ extension DetailViewController: RequestDelegate {
                                                      at: .centeredVertically,
                                                      animated: true)
                 }
-            default:
+            case .idle, .noInternetConnection, .missingPermissions,
+                    .invalidAccessToken, .serverError, .notSpecificError:
                 let alertController = UIAlertController(title: "Something Went Wrong",
                                                         message: "Something went wrong. Please try again.",
                                                         preferredStyle: .alert)
