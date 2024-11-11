@@ -42,11 +42,7 @@ final class DetailPhotoCell: UICollectionViewCell {
         return addToFavoriteButton
     }()
     
-    private lazy var imageView: UIImageView = {
-        var imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
+    private lazy var imageView = UIImageView()
     
     private lazy var verticalStackView: UIStackView = {
         var verticalStackView = UIStackView()
@@ -56,22 +52,14 @@ final class DetailPhotoCell: UICollectionViewCell {
         return verticalStackView
     }()
     
-    private lazy var descriptionLabel: UILabel = {
-        var descriptionLabel = UILabel()
-        descriptionLabel.numberOfLines = 0
-        return descriptionLabel
-    }()
+    private lazy var descriptionLabel = UILabel()
     
-    private lazy var creationDateLabel: UILabel = {
-        var creationDateLabel = UILabel()
-        creationDateLabel.numberOfLines = 0
-        return creationDateLabel
-    }()
+    private lazy var creationDateLabel = UILabel()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.setupImageView()
-        self.setupStackView()
+        self.setupStackViewAndLabels()
         self.setupAddToFavoriteButton()
     }
     
@@ -88,6 +76,7 @@ final class DetailPhotoCell: UICollectionViewCell {
     }
 
     private func setupImageView() {
+        self.imageView.translatesAutoresizingMaskIntoConstraints = false
         self.contentView.addSubview(self.imageView)
 
         NSLayoutConstraint.activate([
@@ -97,8 +86,11 @@ final class DetailPhotoCell: UICollectionViewCell {
         ])
     }
     
-    private func setupStackView() {
-        [self.descriptionLabel, 
+    private func setupStackViewAndLabels() {
+        [self.descriptionLabel,
+         self.creationDateLabel].forEach { $0.numberOfLines = 0 }
+        
+        [self.descriptionLabel,
          self.creationDateLabel].forEach { self.verticalStackView.addArrangedSubview($0) }
         self.contentView.addSubview(self.verticalStackView)
         

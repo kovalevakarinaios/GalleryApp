@@ -12,18 +12,9 @@ final class MainPhotoCell: UICollectionViewCell {
     
     static let identifier = "PhotoCell"
     
-    private lazy var imageView: UIImageView = {
-        var imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
+    private lazy var imageView = UIImageView()
     
-    private lazy var favouriteStatusImageView: UIImageView = {
-        var favouriteStatusImageView = UIImageView()
-        favouriteStatusImageView.translatesAutoresizingMaskIntoConstraints = false
-        favouriteStatusImageView.tintColor = .red
-        return favouriteStatusImageView
-    }()
+    private lazy var favouriteStatusImageView = UIImageView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -41,6 +32,7 @@ final class MainPhotoCell: UICollectionViewCell {
     }
     
     private func setupImageView() {
+        self.imageView.translatesAutoresizingMaskIntoConstraints = false
         self.contentView.addSubview(self.imageView)
         
         NSLayoutConstraint.activate([
@@ -52,7 +44,10 @@ final class MainPhotoCell: UICollectionViewCell {
     }
     
     private func setupFavouriteImageView() {
+        self.favouriteStatusImageView.translatesAutoresizingMaskIntoConstraints = false
         self.contentView.addSubview(self.favouriteStatusImageView)
+
+        self.favouriteStatusImageView.tintColor = .red
         self.favouriteStatusImageView.image = UIImage(systemName: "heart.fill")
         
         NSLayoutConstraint.activate([
