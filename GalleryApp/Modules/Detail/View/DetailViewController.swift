@@ -116,9 +116,8 @@ extension DetailViewController: RequestDelegate {
         DispatchQueue.main.async {
             switch state {
             case .isLoading:
-                print("DetailVC is loading")
+                break
             case .success:
-                print("DetailVC loading is successfull")
                 self.collectionView.reloadData()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     self.collectionView.scrollToItem(at: self.viewModel.getCurrentItemIndexPath(),

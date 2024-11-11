@@ -166,10 +166,8 @@ extension MainViewController: RequestDelegate {
         DispatchQueue.main.async {
             switch state {
             case .isLoading:
-                print("View is loading")
                 self.navigationItem.rightBarButtonItem?.isEnabled = false
             case .success:
-                print("Reload CV")
                 self.collectionView.reloadData()
                 self.navigationItem.rightBarButtonItem?.isEnabled = true
             case .idle:

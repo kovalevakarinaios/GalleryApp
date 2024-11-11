@@ -63,12 +63,10 @@ class CustomTransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning 
             toView.alpha = 0
             fadeView.alpha = 0
             self.selectedCellImageViewSnapshot.frame = self.cellOriginFrame
-            print("Push - snapshot frame: \(self.selectedCellImageViewSnapshot.frame)")
         } else {
             fromView.alpha = 0
             fadeView.alpha = 1
             containerView.insertSubview(toView, belowSubview: fadeView)
-            print("Pop - snapshot frame: \(self.selectedCellImageViewSnapshot.frame)")
         }
      
         // FinalFrame is end state for animating
@@ -78,7 +76,6 @@ class CustomTransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning 
         // Animation setup (will be animated from animatingView.frame to finalFrame)
         UIView.animate(withDuration: transitionDuration(using: transitionContext),
                        animations: {
-            print("Animating from \(self.selectedCellImageViewSnapshot.frame) to \(finalFrameForImage)")
             self.selectedCellImageViewSnapshot.frame = finalFrameForImage
             fadeView.alpha = self.isPush ? 1 : 0
             // swiftlint:disable:next multiple_closures_with_trailing_closure

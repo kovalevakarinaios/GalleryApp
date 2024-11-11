@@ -31,7 +31,6 @@ class NetworkManager: NetworkManagerProtocol {
         var urlRequest = URLRequest(url: url)
         // Getting the accessKey from Info.plist
         guard let accessKey = Bundle.main.object(forInfoDictionaryKey: "UnsplashAccessKey") as? String else {
-            print("The access key was not found in Info.plist")
             return nil
         }
         // Passing the accessKey to the request's header
@@ -42,7 +41,6 @@ class NetworkManager: NetworkManagerProtocol {
     // General Logic of network request
     private func handleRequest(url: URL, completion: @escaping (Result<Data, Error>) -> Void) {
         guard let urlRequest = createRequest(url: url) else {
-            print("Error - \(NetworkError.urlRequestFailed.description)")
             completion(.failure(NetworkError.urlRequestFailed))
             return
         }
@@ -61,7 +59,7 @@ class NetworkManager: NetworkManagerProtocol {
                 if let response = response as? HTTPURLResponse {
                     switch response.statusCode {
                     case 200...299:
-                        print("Response is successfull")
+                        break
                     case 400:
                         completion(.failure(NetworkError.ResponseError.urlRequestFailed))
                     case 401:

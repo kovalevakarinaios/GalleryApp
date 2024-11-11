@@ -39,9 +39,8 @@ class CoreDataHelper {
         newPhoto.width = Int16(photoItem.width)
         do {
             try context.save()
-            print("Item saved, id: \(photoItem.id)")
         } catch {
-            print("Error-saving data")
+            debugPrint("Error-saving data")
         }
     }
     
@@ -56,11 +55,10 @@ class CoreDataHelper {
             let results = try context.fetch(fetchRequest)
             for item in results {
                 context.delete(item)
-                print("Item deleted, id: \(id)")
             }
             try context.save()
         } catch {
-            print("Failed to delete photo")
+            debugPrint("Failed to delete photo")
         }
     }
     
@@ -72,7 +70,7 @@ class CoreDataHelper {
             let items = try context.fetch(FavouritePhoto.fetchRequest()) as? [FavouritePhoto]
             onSuccess(items)
         } catch {
-            print("Error-fetching photo")
+            debugPrint("Error-fetching photo")
         }
     }
     
@@ -86,7 +84,7 @@ class CoreDataHelper {
             let count = try context.count(for: fetchRequest)
             return count > 0
         } catch {
-            print("Failed to detect favourite photo")
+            debugPrint("Failed to detect favourite photo")
             return false
         }
     }
@@ -107,7 +105,7 @@ class CoreDataHelper {
                                                    progress: nil
                 ) { image, _, error, _, _, _ in
                     if let error = error {
-                        print("Failed to load image data with SDWebImage: \(error)")
+                        debugPrint("Failed to load image data with SDWebImage: \(error)")
                     } else {
                         guard let pngImage = image?.pngData() else { return }
                         photoItem.regularPhoto = pngImage
@@ -118,7 +116,7 @@ class CoreDataHelper {
                                                    progress: nil
                 ) { image, _, error, _, _, _ in
                     if let error = error {
-                        print("Failed to load image data with SDWebImage: \(error)")
+                        debugPrint("Failed to load image data with SDWebImage: \(error)")
                     } else {
                         guard let pngImage = image?.pngData() else { return }
                         photoItem.thumbPhoto = pngImage
@@ -127,7 +125,7 @@ class CoreDataHelper {
                 }
                 self.createEntity(photoItem: photoItem)
             case .placeholder:
-                print("CoreData placeholder")
+                break
             }
            
         }

@@ -68,7 +68,6 @@ extension MainViewModel: MainViewModelProtocol {
     }
     
     func getMainCellViewModel(at indexPath: IndexPath) -> MainCellViewModel? {
-        print("\(indexPath.row) \(mainViewModelCells.count)")
         guard indexPath.row < self.mainViewModelCells.count else {
             return nil
            }
@@ -91,8 +90,8 @@ extension MainViewModel: MainViewModelProtocol {
         if self.dataSource[indexPath.row].width > 0 && self.dataSource[indexPath.row].height > 0 {
             return CGFloat(self.dataSource[indexPath.row].height) / CGFloat(self.dataSource[indexPath.row].width)
         } else {
-            print("""
-                  Invalid dimensions for photo at index \(indexPath): 
+            debugPrint("""
+                  Invalid dimensions for photo at index \(indexPath):
                   height = \(self.dataSource[indexPath.row].height),
                   width = \(self.dataSource[indexPath.row].width)
                   """)
@@ -148,9 +147,9 @@ extension MainViewModel {
                 self.loadFavouritePhotosFromCoreData()
                 
                 guard let error = error as? NetworkError else {
-                    return print(error.localizedDescription)
+                    return debugPrint(error.localizedDescription)
                 }
-                print(error.description)
+                debugPrint(error.description)
             }
         }
     }
