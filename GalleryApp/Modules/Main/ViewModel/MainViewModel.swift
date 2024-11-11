@@ -78,8 +78,8 @@ extension MainViewModel: MainViewModelProtocol {
     func prepareDetailViewModel(at indexPath: IndexPath) -> DetailViewModel {
         let detailCellViewModels = self.dataSource.map { item in
             let detailCellViewModel = DetailCellViewModel(item: item)
-            if let date = fromStringToDateFormatter.date(from: detailCellViewModel.createdDate) {
-                detailCellViewModel.createdDate = fromDateToStringFormatter.string(from: date)
+            if let date = DateFormatter.fromStringToDateFormatter.date(from: detailCellViewModel.createdDate) {
+                detailCellViewModel.createdDate = DateFormatter.fromDateToStringFormatter.string(from: date)
             }
             return detailCellViewModel
         }

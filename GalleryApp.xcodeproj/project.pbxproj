@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0217B7722CDC201600871DA0 /* DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0217B7712CDC201500871DA0 /* DateFormatter.swift */; };
+		0217B7722CDC201600871DA0 /* DateFormatter+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0217B7712CDC201500871DA0 /* DateFormatter+Extensions.swift */; };
 		0217B7742CDC302400871DA0 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0217B7732CDC302400871DA0 /* Error.swift */; };
 		0217B7762CDD797100871DA0 /* BaseCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0217B7752CDD797100871DA0 /* BaseCellViewModel.swift */; };
 		0217B77B2CDD819700871DA0 /* Configurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0217B77A2CDD819700871DA0 /* Configurator.swift */; };
@@ -37,7 +37,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0217B7712CDC201500871DA0 /* DateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatter.swift; sourceTree = "<group>"; };
+		0217B7712CDC201500871DA0 /* DateFormatter+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+Extensions.swift"; sourceTree = "<group>"; };
 		0217B7732CDC302400871DA0 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		0217B7752CDD797100871DA0 /* BaseCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCellViewModel.swift; sourceTree = "<group>"; };
 		0217B77A2CDD819700871DA0 /* Configurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configurator.swift; sourceTree = "<group>"; };
@@ -179,7 +179,7 @@
 			children = (
 				02B624AB2CCE859000704E80 /* NetworkManager.swift */,
 				0217B7732CDC302400871DA0 /* Error.swift */,
-				0217B7712CDC201500871DA0 /* DateFormatter.swift */,
+				0217B7712CDC201500871DA0 /* DateFormatter+Extensions.swift */,
 				0272D48F2CD9A2A2003C645C /* CoreData */,
 			);
 			path = Services;
@@ -338,7 +338,7 @@
 				0217B7762CDD797100871DA0 /* BaseCellViewModel.swift in Sources */,
 				02B624BD2CD4DB2100704E80 /* CustomTransitionAnimator.swift in Sources */,
 				0217B77B2CDD819700871DA0 /* Configurator.swift in Sources */,
-				0217B7722CDC201600871DA0 /* DateFormatter.swift in Sources */,
+				0217B7722CDC201600871DA0 /* DateFormatter+Extensions.swift in Sources */,
 				0272D48A2CD99C2D003C645C /* CoreDataHelper.swift in Sources */,
 				0217B77E2CDD9F5E00871DA0 /* PlaceholderCollectionViewCell.swift in Sources */,
 				02B6249B2CCD3A0D00704E80 /* MainViewController.swift in Sources */,

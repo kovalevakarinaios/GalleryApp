@@ -48,45 +48,46 @@ class NetworkManager: NetworkManagerProtocol {
         }
         
         self.checkInternetConnection { isConnected in
-            if isConnected {
-                let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
-                    if let error = error {
-                        completion(.failure(error))
-                    }
-                    
-                    if let response = response as? HTTPURLResponse {
-                        switch response.statusCode {
-                        case 200...299:
-                            print("Response is successfull")
-                        case 400:
-                            completion(.failure(NetworkError.ResponseError.urlRequestFailed))
-                        case 401:
-                            completion(.failure(NetworkError.ResponseError.invalidAccessToken))
-                        case 403:
-                            completion(.failure(NetworkError.ResponseError.missingPermissions))
-                        case 404:
-                            completion(.failure(NetworkError.ResponseError.notFound))
-                        case 500...599:
-                            completion(.failure(NetworkError.ResponseError.serverError))
-                        default:
-                            // swiftlint:disable:next line_length
-                            completion(.failure(NetworkError.ResponseError.unknownResponseError(statusCode: response.statusCode)))
-                        }
-                    } else {
-                        completion(.failure(NetworkError.invalidResponse))
-                    }
-                    
-                    guard let data = data else {
-                        completion(.failure(NetworkError.noData))
-                        return
-                    }
-                    
-                    completion(.success(data))
-                }
-                task.resume()
-            } else {
-                completion(.failure(NetworkError.noInternetConnection))
+            
+            guard isConnected else {
+                return completion(.failure(NetworkError.noInternetConnection))
             }
+            
+            let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+                if let error = error {
+                    completion(.failure(error))
+                }
+                
+                if let response = response as? HTTPURLResponse {
+                    switch response.statusCode {
+                    case 200...299:
+                        print("Response is successfull")
+                    case 400:
+                        completion(.failure(NetworkError.ResponseError.urlRequestFailed))
+                    case 401:
+                        completion(.failure(NetworkError.ResponseError.invalidAccessToken))
+                    case 403:
+                        completion(.failure(NetworkError.ResponseError.missingPermissions))
+                    case 404:
+                        completion(.failure(NetworkError.ResponseError.notFound))
+                    case 500...599:
+                        completion(.failure(NetworkError.ResponseError.serverError))
+                    default:
+                        // swiftlint:disable:next line_length
+                        completion(.failure(NetworkError.ResponseError.unknownResponseError(statusCode: response.statusCode)))
+                    }
+                } else {
+                    completion(.failure(NetworkError.invalidResponse))
+                }
+                
+                guard let data = data else {
+                    completion(.failure(NetworkError.noData))
+                    return
+                }
+                
+                completion(.success(data))
+            }
+            task.resume()
         }
     }
     
