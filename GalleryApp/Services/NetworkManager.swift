@@ -8,10 +8,12 @@
 import Foundation
 import Network
 
-class NetworkManager {
-    
-    static let shared = NetworkManager()
-    
+protocol NetworkManagerProtocol {
+    func getPhotos(currentPage: Int, completion: @escaping (Result<[PhotoItem], Error>) -> Void)
+}
+
+class NetworkManager: NetworkManagerProtocol {
+
     private func createURL(currentPage: Int) -> URL? {
         var components = URLComponents()
         components.scheme = "https"
@@ -119,18 +121,6 @@ class NetworkManager {
                 } catch let decodingError {
                     completion(.failure(NetworkError.decodingError))
                 }
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-    
-    func downloadImage(url: URL, completion: @escaping (Result<Data, Error>) -> Void) {
-        
-        self.handleRequest(url: url) { result in
-            switch result {
-            case .success(let data):
-                completion(.success(data))
             case .failure(let error):
                 completion(.failure(error))
             }

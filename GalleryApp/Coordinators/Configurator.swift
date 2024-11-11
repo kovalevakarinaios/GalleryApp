@@ -14,7 +14,8 @@ protocol ConfiguratorProtocol {
 class Configurator: ConfiguratorProtocol {
     
     static func createMainModule() -> UIViewController {
-        let viewModel = MainViewModel()
+        let networkManager = NetworkManager()
+        let viewModel = MainViewModel(networkManager: networkManager)
         let viewController = MainViewController(viewModel: viewModel)
         return viewController
     }

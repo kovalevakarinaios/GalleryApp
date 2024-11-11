@@ -42,6 +42,8 @@ class MainViewModel {
     private var isOfflineMode: Bool = false
     weak var delegate: RequestDelegate?
     
+    private var networkManager: NetworkManagerProtocol
+    
     private var viewState: ViewState {
         // When viewState is changed, notify about it MainViewController
         didSet {
@@ -52,8 +54,9 @@ class MainViewModel {
     private var dataSource: [PhotoItem] = []
     private var mainViewModelCells: [MainCellViewModel] = []
 
-    init() {
+    init(networkManager: NetworkManagerProtocol) {
         self.viewState = .idle
+        self.networkManager = networkManager
     }
 }
 
@@ -115,7 +118,7 @@ extension MainViewModel {
     func loadPhotos() {
         guard viewState != .isLoading else { return }
         self.viewState = .isLoading
-        NetworkManager.shared.getPhotos(currentPage: self.currentPage) { result in
+        self.networkManager.getPhotos(currentPage: self.currentPage) { result in
             switch result {
             case .success(let photos):
                 self.handleSuccessfullLoad(photos: photos)
