@@ -65,6 +65,12 @@ final class MainViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .refresh,
                                                                  target: self,
                                                                  action: #selector(self.updateData))
+        
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "heart.fill"),
+                                                                style: .plain,
+                                                                target: self,
+                                                                action: #selector(self.showFavourite))
+        self.navigationItem.leftBarButtonItem?.tintColor = .systemGray
     }
 
     private func setupDelegates() {
@@ -105,6 +111,24 @@ final class MainViewController: UIViewController {
     func updateData() {
         self.viewModel.performFullRefresh()
         self.collectionView.setContentOffset(.zero, animated: true)
+    }
+    
+    @objc
+    func showFavourite() {
+        guard let leftButton = self.navigationItem.leftBarButtonItem else { return }
+        guard let rightButton = self.navigationItem.rightBarButtonItem else { return }
+        
+        leftButton.isSelected.toggle()
+        
+        if leftButton.isSelected {
+            leftButton.tintColor = .red
+            rightButton.isEnabled = false
+        } else {
+            leftButton.tintColor = .systemGray
+            rightButton.isEnabled = true
+        }
+
+        self.viewModel.showFavourite()
     }
 }
 
@@ -154,7 +178,7 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
     func collectionView(_ collectionView: UICollectionView,
                         willDisplay cell: UICollectionViewCell,
                         forItemAt indexPath: IndexPath) {
-        if indexPath.row == self.viewModel.numberOfItems - 4 && !self.viewModel.checkOfflineStatus() {
+        if indexPath.row == self.viewModel.numberOfItems - 4 && self.viewModel.shouldRequestNextPages() {
             self.viewModel.loadPhotos()
         }
     }
@@ -165,32 +189,11 @@ extension MainViewController: RequestDelegate {
     func didUpdate(with state: ViewState) {
         DispatchQueue.main.async {
             switch state {
-            case .isLoading:
-                self.navigationItem.rightBarButtonItem?.isEnabled = false
+            case .isLoading, .idle:
+                break
             case .success:
                 self.collectionView.reloadData()
-                self.navigationItem.rightBarButtonItem?.isEnabled = true
-            case .idle:
-                break
-            case .noInternetConnection:
-                self.showAlertController(title: "No Internet Connection",
-                                         message: """
-                                         There is no internet connection.
-                                         Please check your connection and try again.
-                                         """)
-            case .missingPermissions:
-                self.showAlertController(title: "Insufficient Permissions to Access Content",
-                                         message: """
-                                         At the moment, you do not have sufficient permissions to access this content. 
-                                         Please contact your administrator.
-                                         """)
-            case .invalidAccessToken:
-                self.showAlertController(title: "Authorization Error",
-                                         message: "Please refresh your token and try again.")
-            case .serverError:
-                self.showAlertController(title: "Server Error",
-                                         message: "The server is not responding. Please try again later.")
-            case .notSpecificError:
+            case .error:
                 self.showAlertController(title: "Something Went Wrong",
                                          message: "Something went wrong. Please try again.")
             }

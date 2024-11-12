@@ -11,13 +11,8 @@ import UIKit
 enum ViewState {
     case isLoading
     case success
+    case error
     case idle
-    // Error States
-    case noInternetConnection
-    case missingPermissions
-    case invalidAccessToken
-    case serverError
-    case notSpecificError
 }
 
 protocol RequestDelegate: AnyObject {
@@ -30,16 +25,18 @@ protocol MainViewModelProtocol {
     func loadPhotos()
     func performFullRefresh()
     func getRatio(for indexPath: IndexPath) -> CGFloat
-    func checkOfflineStatus() -> Bool
+    func shouldRequestNextPages() -> Bool
     func prepareDetailViewModel(at indexPath: IndexPath) -> DetailViewModel
     func getMainCellViewModel(at indexPath: IndexPath) -> MainCellViewModel?
+    func showFavourite()
 }
 
 final class MainViewModel {
     
     // Request data page-by-page (30 photos on each page)
     private var currentPage = 1
-    private var isOfflineMode: Bool = false
+    private var shouldRequestNextPage = true
+    private var showFavouriteMode = false
     weak var delegate: RequestDelegate?
     
     private var networkManager: NetworkManagerProtocol
@@ -70,7 +67,7 @@ extension MainViewModel: MainViewModelProtocol {
     func getMainCellViewModel(at indexPath: IndexPath) -> MainCellViewModel? {
         guard indexPath.row < self.mainViewModelCells.count else {
             return nil
-           }
+        }
         return self.mainViewModelCells[indexPath.row]
     }
     
@@ -99,13 +96,26 @@ extension MainViewModel: MainViewModelProtocol {
         }
     }
     
-    func checkOfflineStatus() -> Bool {
-        isOfflineMode
+    func shouldRequestNextPages() -> Bool {
+        self.shouldRequestNextPage
     }
 }
 
 // MARK: Setup Data Loading
 extension MainViewModel {
+    
+    func showFavourite() {
+        self.showFavouriteMode.toggle()
+        
+        if self.showFavouriteMode {
+            self.loadFavouritePhotosFromCoreData()
+            self.shouldRequestNextPage = false
+        } else {
+            self.performFullRefresh()
+            self.shouldRequestNextPage = true
+        }
+        self.viewState = .success
+    }
 
     func performFullRefresh() {
         self.currentPage = 1
@@ -122,28 +132,7 @@ extension MainViewModel {
             case .success(let photos):
                 self.handleSuccessfullLoad(photos: photos)
             case .failure(let error):
-                if let networkError = error as? NetworkError.ResponseError {
-                    switch networkError {
-                    case .missingPermissions:
-                        self.viewState = .missingPermissions
-                    case .invalidAccessToken:
-                        self.viewState = .invalidAccessToken
-                    case .serverError, .notFound:
-                        self.viewState = .serverError
-                    case .urlRequestFailed, .unknownResponseError:
-                        self.viewState = .notSpecificError
-                    }
-                } else if let error = error as? NetworkError {
-                    switch error {
-                    case .invalidURL, .urlRequestFailed, .noData, .decodingError, .invalidResponse:
-                        self.viewState = .notSpecificError
-                    case .noInternetConnection:
-                        self.viewState = .noInternetConnection
-                    }
-                } else {
-                    self.viewState = .notSpecificError
-                }
-                
+                self.viewState = .error
                 self.loadFavouritePhotosFromCoreData()
                 
                 guard let error = error as? NetworkError else {
@@ -159,7 +148,7 @@ extension MainViewModel {
         self.dataSource.append(contentsOf: photos)
         self.mainViewModelCells.append(contentsOf: photos.map { MainCellViewModel(item: $0) })
         self.viewState = .success
-        self.isOfflineMode = false
+        self.shouldRequestNextPage = true
     }
     
     private func loadFavouritePhotosFromCoreData() {
@@ -169,7 +158,8 @@ extension MainViewModel {
             guard let fetchingPhotos = fetchingPhotos else { return }
             self.dataSource = fetchingPhotos.map { PhotoItem(coreDataItem: $0) }
             self.mainViewModelCells = self.dataSource.map { MainCellViewModel(item: $0) }
-            self.isOfflineMode = true
+            self.showFavouriteMode = true
+            self.shouldRequestNextPage = false
         })
     }
 }

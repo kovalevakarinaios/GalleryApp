@@ -115,7 +115,7 @@ extension DetailViewController: RequestDelegate {
     func didUpdate(with state: ViewState) {
         DispatchQueue.main.async {
             switch state {
-            case .isLoading:
+            case .isLoading, .idle:
                 break
             case .success:
                 self.collectionView.reloadData()
@@ -124,8 +124,7 @@ extension DetailViewController: RequestDelegate {
                                                      at: .centeredVertically,
                                                      animated: true)
                 }
-            case .idle, .noInternetConnection, .missingPermissions,
-                    .invalidAccessToken, .serverError, .notSpecificError:
+            case .error:
                 let alertController = UIAlertController(title: "Something Went Wrong",
                                                         message: "Something went wrong. Please try again.",
                                                         preferredStyle: .alert)
